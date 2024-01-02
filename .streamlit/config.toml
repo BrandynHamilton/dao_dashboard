@@ -1,0 +1,16 @@
+[theme]
+# Primary colors
+primaryColor = "#E694FF"
+
+# Background color for the main content area
+backgroundColor = "#0E1117"
+
+# Background color for sidebar and most interactive widgets
+secondaryBackgroundColor = "#262730"
+
+# Color for text
+textColor = "#FAFAFA"
+
+# Font style (e.g., "sans serif", "serif", "monospace")
+font = "sans serif"
+
