@@ -5,4 +5,4 @@ numpy
 requests
 yfinance
 pandas
-
+sklearn
