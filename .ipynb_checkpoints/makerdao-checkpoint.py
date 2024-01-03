@@ -136,7 +136,7 @@ def fetch_and_process_api_data(api_url, data_key, date_column, value_column, dat
         print(f"Failed to retrieve data: {response.status_code}")
         return pd.DataFrame()  # Return an empty DataFrame in case of failure    
 # API URLs and parameters
-api_key = "z4mDm3TRGLB3hta98szuGAqineaf6XCh"
+api_key = "Vti1XpoLF3ulDjZuSbyLXblt4I1JGoVu"
 api_key_cg = "CG-jTsiV2rsyVSHHULoNSWHU493"
 
 # MakerDAO API call
