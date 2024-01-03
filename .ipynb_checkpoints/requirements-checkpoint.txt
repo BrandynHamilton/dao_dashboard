@@ -1,2 +1,8 @@
-plotly
+streamlit
+plotly>=5.0.0
+seaborn
+numpy
+requests
+yfinance
+pandas
 
