@@ -88,9 +88,9 @@ fig = create_interactive_sml(risk_free_rate, average_yearly_risk_premium if time
 st.plotly_chart(fig)
 
 percent_risk = average_yearly_risk_premium * 100
-st.subheader('Benchmark: DefiPulse Index (DPI)')
 
-st.line_chart(dpi_history['price'])
-st.write(f"DPI CAGR is {cagr_percentage:.2f}%")
-st.write(f"DPI Average Excess Return is {percent_risk:.2f}%")
+with st.expander('Benchmark: DefiPulse Index (DPI)'):
+    st.line_chart(dpi_history['price'])
+    st.write(f"DPI CAGR is {cagr_percentage:.2f}%")
+    st.write(f"DPI Average Excess Return is {percent_risk:.2f}%")
 

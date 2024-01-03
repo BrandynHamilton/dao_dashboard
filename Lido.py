@@ -15,7 +15,6 @@ import requests
 import numpy as np
 import seaborn as sns
 import yfinance as yf
-import import_ipynb
 sns.set_theme()
 # Set the float display format to suppress scientific notation
 #pd.set_option('display.float_format', lambda x: '%.3f' % x)

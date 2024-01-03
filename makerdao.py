@@ -617,7 +617,7 @@ filtered_stats = monthly_stats[(monthly_stats.index >= "2019-12") & (monthly_sta
 
 
 #linear regression and r value for net income and interest rates
-
+"""
 from sklearn.linear_model import LinearRegression
 #We do .iloc[:-1] because is API and month is not done; we use previous full month
 x = tbill_decimals['value'].iloc[:-1].values.reshape(-1, 1)
@@ -656,7 +656,7 @@ plt.title('Linear Regression Analysis')
 plt.legend()
 
 # Display the plot
-"""plt.show()"""
+plt.show()
 
 
 # In[90]:
@@ -669,7 +669,7 @@ from scipy.stats import pearsonr
 
 correlation_coefficient, _ = pearsonr(x2, y2)
 print(correlation_coefficient)
-
+"""
 
 # DAO income sensitive to broader crypto market volume (demand for services), and interest rate hikes (interest income)
 
@@ -884,12 +884,12 @@ x = tbill_decimals['value'].iloc[:-1].values.reshape(-1, 1)
 y = filtered_stats['lending_income'].iloc[:-1].values
 
 model = LinearRegression()
-model.fit(x, y)
+#model.fit(x, y)
 
 
-r_squared = model.score(x, y)
+#r_squared = model.score(x, y)
 
-print("R^2:", r_squared)
+#print("R^2:", r_squared)
 
 
 
