@@ -94,17 +94,5 @@ with st.expander('Benchmark: DefiPulse Index (DPI)'):
     st.write(f"DPI CAGR is {cagr_percentage:.2f}%")
     st.write(f"DPI Average Excess Return is {percent_risk:.2f}%")
 
-import streamlit as st
-from PIL import Image
-import requests
-from io import BytesIO
 
-# Get the CoinGecko logo image from a URL
-response = requests.get('https://static.coingecko.com/s/coingecko-logo.png')
-coingecko_logo = Image.open(BytesIO(response.content))
 
-# Display the logo and attribution at the bottom of the sidebar or home page
-st.sidebar.image(coingecko_logo, width=100)
-st.sidebar.markdown(
-    'Crypto market data provided by [CoinGecko](https://www.coingecko.com)'
-)
