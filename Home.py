@@ -106,6 +106,5 @@ coingecko_logo = Image.open(BytesIO(response.content))
 # Display the logo and attribution at the bottom of the sidebar or home page
 st.sidebar.image(coingecko_logo, width=100)
 st.sidebar.markdown(
-    'Crypto market data provided by [CoinGecko](https://www.coingecko.com)',
-    unsafe_allow_html=True
+    'Crypto market data provided by [CoinGecko](https://www.coingecko.com)'
 )
