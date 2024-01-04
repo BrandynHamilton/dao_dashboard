@@ -5,6 +5,10 @@ import numpy as np
 # Assuming makerdao.py is correctly imported and necessary variables are available
 from makerdao import *
 
+from sidebar import create_sidebar
+
+create_sidebar()
+
 st.title('MakerDAO (MKR)')
 
 # Displaying current price with line chart
@@ -149,3 +153,10 @@ with col6:
     st.write(f"Cost of Debt: {rd:.2%}")
     st.write(f"CAGR: {mkr_cagr:.2%}")
     st.write(f"Average Excess Return: {mkr_avg_excess_return:.2%}")
+
+
+
+st.markdown("""
+---
+MakerDAO data and insights provided by [Steakhouse's MakerDAO dashboard on Dune Analytics](https://dune.com/steakhouse/makerdao).
+""", unsafe_allow_html=True)

@@ -4,6 +4,9 @@ import numpy as np
 import plotly.graph_objs as go
 from makerdao import beta as makerdao_beta, average_yearly_risk_premium, current_risk_free as risk_free_rate, mkr_cagr, mkr_avg_excess_return, cumulative_risk_premium, cagr_percentage, dpi_history
 from Lido import beta as lidodao_beta, lido_cagr, ldo_avg_excess_return
+from sidebar import create_sidebar
+
+create_sidebar()
 
 st.title('DAO Dashboard')
 
@@ -93,6 +96,9 @@ with st.expander('Benchmark: DefiPulse Index (DPI)'):
     st.line_chart(dpi_history['price'])
     st.write(f"DPI CAGR is {cagr_percentage:.2f}%")
     st.write(f"DPI Average Excess Return is {percent_risk:.2f}%")
+
+import streamlit as st
+
 
 
 

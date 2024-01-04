@@ -5,6 +5,21 @@ import plotly.graph_objs as go
 from makerdao import beta as makerdao_beta, average_yearly_risk_premium, current_risk_free as risk_free_rate, mkr_cagr, mkr_avg_excess_return, cumulative_risk_premium, cagr_percentage, dpi_history
 from Lido import beta as lidodao_beta, lido_cagr, ldo_avg_excess_return
 
+from PIL import Image
+
+# Path to your local image file
+image_path = r"Images\coingeckologo.png"
+
+# Open the image file
+coingecko_logo = Image.open(image_path)
+
+# Display the logo and attribution at the bottom of the sidebar or home page
+st.sidebar.image(coingecko_logo, width=50)
+st.sidebar.markdown(
+    'Crypto market data provided by [CoinGecko](https://www.coingecko.com)',
+    unsafe_allow_html=True
+)
+
 st.title('DAO Dashboard')
 
 def create_interactive_sml(risk_free_rate, market_risk_premium, makerdao_beta, lidodao_beta, makerdao_return, lidodao_return, term):
@@ -93,6 +108,9 @@ with st.expander('Benchmark: DefiPulse Index (DPI)'):
     st.line_chart(dpi_history['price'])
     st.write(f"DPI CAGR is {cagr_percentage:.2f}%")
     st.write(f"DPI Average Excess Return is {percent_risk:.2f}%")
+
+import streamlit as st
+
 
 
 

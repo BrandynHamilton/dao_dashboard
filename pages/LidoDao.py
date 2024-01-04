@@ -4,6 +4,10 @@ import numpy as np
 
 from Lido import * 
 
+from sidebar import create_sidebar
+
+create_sidebar()
+
 st.title('LidoDAO (LDO)')
 
 st.write(f"${ldo_current_price:,.2f}")
@@ -128,3 +132,9 @@ st.write(f'Cost of Debt: {cost_of_debt:.2%}')
 st.write(f'Cost of Equity: {cost_equity:.2%}')
 st.write(f"CAGR: {lido_cagr:.2%}")
 st.write(f"Average Excess Return: {ldo_avg_excess_return:.2%}")
+
+st.markdown("""
+---
+Data and insights sourced from [Steakhouse's Lido SAFU dashboard on Dune Analytics](https://dune.com/steakhouse/lido-safu).
+""", unsafe_allow_html=True)
+

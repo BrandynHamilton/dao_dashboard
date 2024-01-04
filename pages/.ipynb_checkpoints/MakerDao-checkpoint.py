@@ -5,6 +5,22 @@ import numpy as np
 # Assuming makerdao.py is correctly imported and necessary variables are available
 from makerdao import *
 
+# Display the logo and attribution at the bottom of the sidebar or home page
+from PIL import Image
+
+# Path to your local image file
+image_path = r"Images\coingeckologo.png"
+
+# Open the image file
+coingecko_logo = Image.open(image_path)
+
+# Display the logo and attribution at the bottom of the sidebar or home page
+st.sidebar.image(coingecko_logo, width=50)
+st.sidebar.markdown(
+    'Crypto market data provided by [CoinGecko](https://www.coingecko.com)',
+    unsafe_allow_html=True
+)
+
 st.title('MakerDAO (MKR)')
 
 # Displaying current price with line chart
@@ -149,3 +165,10 @@ with col6:
     st.write(f"Cost of Debt: {rd:.2%}")
     st.write(f"CAGR: {mkr_cagr:.2%}")
     st.write(f"Average Excess Return: {mkr_avg_excess_return:.2%}")
+
+
+
+st.markdown("""
+---
+MakerDAO data and insights provided by [Steakhouse's MakerDAO dashboard on Dune Analytics](https://dune.com/steakhouse/makerdao).
+""", unsafe_allow_html=True)
