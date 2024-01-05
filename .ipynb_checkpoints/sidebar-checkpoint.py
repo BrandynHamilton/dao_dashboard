@@ -19,17 +19,17 @@ def create_sidebar():
             st.sidebar.success("You have successfully subscribed!")
         else:
             st.sidebar.error("Please enter a valid email address.")
+            st.sidebar.write(" ")  # Add multiple of these if needed to create space
+            st.sidebar.markdown("Have a DAO to suggest? [Tell us more](YOUR_INQUIRY_LINK)", unsafe_allow_html=True)
+    st.sidebar.write(" ")     
+    st.sidebar.write(" ")
+    st.sidebar.write(" ")
+    st.sidebar.write(" ")
+    st.sidebar.write(" ")
+    st.sidebar.write(" ")
 
-    # CoinGecko Logo and Attribution
-    coingecko_logo = Image.open('Images/coingecko_logo.png')  # Update path as needed
+    coingecko_logo = Image.open(r'Images/coingeckologo.png')  # Update path as needed
     st.sidebar.image(coingecko_logo, width=50)
-    st.sidebar.markdown(
-        'Crypto market data provided by [CoinGecko](https://www.coingecko.com)',
-        unsafe_allow_html=True
-    )
+    st.sidebar.markdown('<p style="font-size:smaller;">Crypto market data provided by <a href="https://www.coingecko.com" target="_blank">CoinGecko</a></p>', unsafe_allow_html=True)
 
-    # Additional Sidebar Elements (if any)
-    # ...
-
-# Example use of additional functions or configurations
-# You can add more functions or configurations here if needed for your sidebar
+   

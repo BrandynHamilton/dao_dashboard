@@ -5,21 +5,9 @@ import numpy as np
 # Assuming makerdao.py is correctly imported and necessary variables are available
 from makerdao import *
 
-# Display the logo and attribution at the bottom of the sidebar or home page
-from PIL import Image
+from sidebar import create_sidebar
 
-# Path to your local image file
-image_path = r"Images\coingeckologo.png"
-
-# Open the image file
-coingecko_logo = Image.open(image_path)
-
-# Display the logo and attribution at the bottom of the sidebar or home page
-st.sidebar.image(coingecko_logo, width=50)
-st.sidebar.markdown(
-    'Crypto market data provided by [CoinGecko](https://www.coingecko.com)',
-    unsafe_allow_html=True
-)
+create_sidebar()
 
 st.title('MakerDAO (MKR)')
 
@@ -33,8 +21,8 @@ color_map = {'bad': 'red', 'okay': 'yellow', 'good': 'green'}
 score_color = color_map.get(latest_health_score, 'black')
 st.markdown(f'<h3 style="color: white;">Financial Health: <span style="color: {score_color};">{latest_health_score.capitalize()}</span></h3>', unsafe_allow_html=True)
 
-with st.expander("Executive Summary"):
-    st.write("""
+with st.container():
+    st.write(""" ### Executive Summary
     MakerDAO stands out as a dominant player in the decentralized finance (DeFi) sector, with its cutting-edge Multi-Collateral Dai (MCD) system and robust governance model. Exhibiting a net profit margin of 50.51% and an impressive return on equity of 141.04%, the company has proven its profitability and efficient capital utilization. An enterprise value of $2,455,136,429.26 and a price to earnings ratio of 18.96 showcases MakerDAO as an attractive proposition within the DeFi industry.
     """)
 
