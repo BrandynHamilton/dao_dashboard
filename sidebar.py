@@ -28,6 +28,10 @@ def create_sidebar():
     st.sidebar.write(" ")
     st.sidebar.write(" ")
     st.sidebar.write(" ")
+    st.sidebar.write(" ")
+    st.sidebar.write(" ")
+    st.sidebar.write(" ")
+    st.sidebar.write(" ")
 
     coingecko_logo = Image.open(r'Images/coingeckologo.png')  # Update path as needed
     st.sidebar.image(coingecko_logo, width=50)
