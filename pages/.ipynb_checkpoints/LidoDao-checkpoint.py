@@ -4,6 +4,10 @@ import numpy as np
 
 from Lido import * 
 
+from sidebar import create_sidebar
+
+create_sidebar()
+
 st.title('LidoDAO (LDO)')
 
 st.write(f"${ldo_current_price:,.2f}")
@@ -18,9 +22,9 @@ st.markdown(f'<h3 style="color: white;">Financial Health: <span style="color: {s
 
 import streamlit as st
 
-with st.expander("Executive Summary"):
+with st.container():
     st.markdown("""
-    **Executive Summary:**  
+    ### Executive Summary  
     MakerDAO stands out as a dominant player in the decentralized finance (DeFi) sector, with its cutting-edge Multi-Collateral Dai (MCD) system and robust governance model. Exhibiting a net profit margin of 50.51% and an impressive return on equity of 141.04%, the company has proven its profitability and efficient capital utilization. An enterprise value of $2,455,136,429.26 and a price to earnings ratio of 18.96 showcases MakerDAO as an attractive proposition within the DeFi industry.
     """)
 
@@ -128,23 +132,13 @@ st.write(f'Cost of Debt: {cost_of_debt:.2%}')
 st.write(f'Cost of Equity: {cost_equity:.2%}')
 st.write(f"CAGR: {lido_cagr:.2%}")
 st.write(f"Average Excess Return: {ldo_avg_excess_return:.2%}")
+st.write(enterprise_value)
+st.write(f'market cap is {ldo_market_value}')
+st.write(f'debt {liabilities}')
+st.write(f'assets {assets}')
 
 st.markdown("""
 ---
 Data and insights sourced from [Steakhouse's Lido SAFU dashboard on Dune Analytics](https://dune.com/steakhouse/lido-safu).
 """, unsafe_allow_html=True)
 
-from PIL import Image
-
-# Path to your local image file
-image_path = r"Images\coingeckologo.png"
-
-# Open the image file
-coingecko_logo = Image.open(image_path)
-
-# Display the logo and attribution at the bottom of the sidebar or home page
-st.sidebar.image(coingecko_logo, width=50)
-st.sidebar.markdown(
-    'Crypto market data provided by [CoinGecko](https://www.coingecko.com)',
-    unsafe_allow_html=True
-)

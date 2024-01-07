@@ -22,9 +22,9 @@ st.markdown(f'<h3 style="color: white;">Financial Health: <span style="color: {s
 
 import streamlit as st
 
-with st.expander("Executive Summary"):
+with st.container():
     st.markdown("""
-    **Executive Summary:**  
+    ### Executive Summary  
     MakerDAO stands out as a dominant player in the decentralized finance (DeFi) sector, with its cutting-edge Multi-Collateral Dai (MCD) system and robust governance model. Exhibiting a net profit margin of 50.51% and an impressive return on equity of 141.04%, the company has proven its profitability and efficient capital utilization. An enterprise value of $2,455,136,429.26 and a price to earnings ratio of 18.96 showcases MakerDAO as an attractive proposition within the DeFi industry.
     """)
 
@@ -132,6 +132,10 @@ st.write(f'Cost of Debt: {cost_of_debt:.2%}')
 st.write(f'Cost of Equity: {cost_equity:.2%}')
 st.write(f"CAGR: {lido_cagr:.2%}")
 st.write(f"Average Excess Return: {ldo_avg_excess_return:.2%}")
+st.write(enterprise_value)
+st.write(f'market cap is {ldo_market_value}')
+st.write(f'debt {liabilities}')
+st.write(f'assets {assets}')
 
 st.markdown("""
 ---
