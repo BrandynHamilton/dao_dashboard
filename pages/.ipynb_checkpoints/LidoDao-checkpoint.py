@@ -25,52 +25,37 @@ import streamlit as st
 with st.container():
     st.markdown("""
     ### Executive Summary  
-    MakerDAO stands out as a dominant player in the decentralized finance (DeFi) sector, with its cutting-edge Multi-Collateral Dai (MCD) system and robust governance model. Exhibiting a net profit margin of 50.51% and an impressive return on equity of 141.04%, the company has proven its profitability and efficient capital utilization. An enterprise value of $2,455,136,429.26 and a price to earnings ratio of 18.96 showcases MakerDAO as an attractive proposition within the DeFi industry.
+    LidoDAO, with its governance token LDO priced at $2.77, operates within the decentralized finance (DeFi) ecosystem, managing liquid staking protocols. Despite a challenging period with a net loss of $40,586,965.90, the organization maintains a strong asset base. The financial health of LidoDAO is currently stable, with assets exceeding liabilities and an equity of $91,616,907.0751.
     """)
 
 with st.expander("Financial Health and Analysis"):
-    st.markdown("""
-    **Financial Health and Analysis:**  
-    MakerDAO has realized a commendable net income of $76,051,021.51 TTM. Yet, liquidity ratios raise flags about its short-term fiscal pressures, with a current ratio of 0.53 and a cash ratio of 0.09. The leverage ratios underscore a substantial dependence on debt, evidenced by a debt to equity ratio of 96.51. While profitability metrics are strong, these ratios highlight areas for strategic financial management focus.
+    st.markdown("""  
+    LidoDAO exhibits a balanced liquidity stance, but this is overshadowed by negative returns and a high debt to equity ratio of 229.89. Such financial leverage points to potential risks requiring astute management. Nonetheless, market sentiment remains optimistic about LidoDAO's prospects, as reflected in a solid market to book ratio of 26.91 and an impressive average excess return of 61.87%.
     """)
 
-with st.expander("Market Position and Business Operations"):
-    st.markdown("""
-    **Market Position and Business Operations:**  
+with st.expander("Operational Insights and Strategic Recommendations"):
+    st.markdown("""  
     With earnings per share at $84.05 and a market to book ratio of 27.17, investor confidence is palpable. The company's CAGR of 42.64% and an average excess return of 111.15% underscore its robust market standing. The SML analysis, in light of MakerDAO's beta of 0.78, reveals a lower systemic risk relative to the market, indicating resilience against market volatility.
     """)
 
-with st.expander("Business Model and Governance"):
-    st.markdown("""
-    **Business Model and Governance:**  
-    MakerDAO's pioneering governance via the MKR token fosters transparency and user engagement, integral to the DeFi ethos. The operational success of the Maker Protocol, a cornerstone of Ethereum-based dapps, reflects the strategic effectiveness of the Maker Foundation's decentralization efforts.
-    """)
-
-with st.expander("Strategic Recommendations for Management"):
-    st.markdown("""
-    **Strategic Recommendations for Management:**  
-    
-    - **Improve Liquidity:** Prioritize bolstering cash reserves and managing liabilities to enhance fiscal responsiveness.
-    
-    - **Debt Management:** Rebalance the capital structure to mitigate financial risk and improve the debt to equity standing.
-    
-    - **Expansion of Services:** Diversify the Maker Protocol’s offerings and collateral assets to broaden user base and stabilize revenue.
-    
-    - **Community Engagement:** Intensify community involvement in governance to maintain protocol responsiveness and drive innovation.
-    
-    - **Risk Management:** Capitalize on the lower beta to highlight MakerDAO's relative market stability. Advance risk analytics and implement hedging strategies to safeguard against market downturns. Promote community risk education for more informed governance decisions.
+with st.expander("Operational Insights and Strategic Recommendations"):
+    st.markdown("""  
+    The diligent management of LidoDAO's liquid staking protocols is noteworthy. However, recent financial shortfalls signal a need for tactical readjustment. Cost reduction strategies are crucial for converting the net loss to profit while maintaining operational integrity. Revenue growth can be spurred through innovative streams and revisiting service fees and staking mechanisms. Addressing the high leverage through debt restructuring and equity solutions is essential for the DAO's fiscal well-being. Fostering active participation in governance through LDO token holders could drive innovation and bolster decision-making processes.
     """)
 
 with st.expander("Investor Recommendations"):
     st.markdown("""
-    **Investor Recommendations:**  
-    Investors should consider MakerDAO's profitability and innovative governance as indicative of a strong investment opportunity. However, attention must be given to the liquidity constraints and high leverage, which introduce elements of financial risk.
+    Investors considering LidoDAO should assess its potential role in the DeFi ecosystem against the backdrop of the current negative profitability and high leverage. The DAO's considerable asset base and positive growth indicators may attract those with a long-term outlook and a tolerance for the existing financial fluctuations.
+    """)
+
+with st.expander("Management Recommendations"):
+    st.markdown("""  
+    For LidoDAO's leadership, the priority lies in fiscal reformation, strategic growth investments, and leveraging its distinctive DAO governance to enhance operational flexibility and strategy. This tactical approach is pivotal for navigating the existing financial intricacies and reinforcing LidoDAO's market presence.
     """)
 
 with st.expander("Conclusion"):
-    st.markdown("""
-    **Conclusion:**  
-    MakerDAO's position in the DeFi marketplace is underscored by strong financial indicators and a distinctive governance model. The strategic focus on improving liquidity and debt management, coupled with an innovative approach to community engagement and risk management, will be vital for MakerDAO's sustainable growth and continued market leadership. Investors and management alike should take heed of the company's financial nuances and its potential within the evolving DeFi landscape.
+    st.markdown("""  
+    LidoDAO's potential in the DeFi domain is noteworthy, bolstered by a solid asset foundation and an engaged community governance framework. Addressing the outlined financial and operational challenges is key for both investors and the management team, aiming for LidoDAO's enduring growth and innovation in the liquid staking protocol landscape.
     """)
 
 

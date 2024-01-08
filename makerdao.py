@@ -953,4 +953,4 @@ metrics_standard_scaled['financial_health_category'] = metrics_standard_scaled['
 # Display the results
 print(metrics_standard_scaled[['normalized_financial_health_score', 'financial_health_category']])
 
-print(beta)
+ev_to_rev = enterprise_value/ttm_revenue

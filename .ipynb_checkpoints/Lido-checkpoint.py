@@ -740,3 +740,4 @@ print(consolidated_income_statement)
 
 enterprise_value = ldo_market_value + liabilities[0] - assets[0]
 
+ev_to_rev = enterprise_value/ttm_revenue
