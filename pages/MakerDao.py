@@ -1,10 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-
-# Assuming makerdao.py is correctly imported and necessary variables are available
 from makerdao import *
-
 from sidebar import create_sidebar
 
 create_sidebar()
@@ -108,7 +105,7 @@ with col1:
 
 with col2:
     st.subheader('Live Balance Sheet')
-    st.table(balancesheet)
+    st.table(balancesheet.style.format({"Amount": "${:,.2f}"}))
 
     
 

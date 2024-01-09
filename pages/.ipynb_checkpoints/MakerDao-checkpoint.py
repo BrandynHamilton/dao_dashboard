@@ -108,7 +108,7 @@ with col1:
 
 with col2:
     st.subheader('Live Balance Sheet')
-    st.table(balancesheet)
+    st.table(balancesheet.style.format({"Amount": "${:,.2f}"}))
 
     
 

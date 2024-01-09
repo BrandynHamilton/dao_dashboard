@@ -20,13 +20,10 @@ score_color = color_map.get(latest_health_score, 'black')
 st.markdown(f'<h3 style="color: white;">Financial Health: <span style="color: {score_color};">{latest_health_score.capitalize()}</span></h3>', unsafe_allow_html=True)
 # Get the latest financial health category
 
-import streamlit as st
-
 with st.container():
     st.markdown("""  
 LidoDAO, with its governance token LDO priced at \$2.77, operates within the decentralized finance (DeFi) ecosystem, managing liquid staking protocols. Despite a challenging period with a net loss of \$40,586,965.90, the organization maintains a strong asset base. The financial health of LidoDAO is currently stable, with assets exceeding liabilities and an equity of \$91,616,907.0751.
 """)
-
 
 with st.expander("Financial Health and Analysis"):
     st.markdown("""  
@@ -59,7 +56,6 @@ with st.expander("Conclusion"):
     """)
 
 
-
 balancesheet_data = {
     'Assets': assets.iloc[0],
     'Liabilities': abs(liabilities.iloc[0]),
@@ -67,18 +63,18 @@ balancesheet_data = {
 }
 
 balancesheet = pd.DataFrame.from_dict(balancesheet_data, orient='index', columns=['Amount'])
-balancesheet.index.name = 'Item'
+#balancesheet.index.name = 'Item'
 
 
 col1, col2 = st.columns(2)
 
 with col1:
     st.subheader('TTM Consolidated Income Statement')
-    st.write(consolidated_income_statement)
+    st.table(consolidated_income_statement)
 
 with col2:
     st.subheader('Live Balance Sheet')
-    st.dataframe(balancesheet)
+    st.table(balancesheet)
 
 col3, col4 = st.columns(2)
 
