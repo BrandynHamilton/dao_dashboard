@@ -286,28 +286,18 @@ equitydf.index = equitydf.index.normalize()
 
 # **Here lets focus on getting to what we need for model; for DCF we need WACC; for WACC we need SML for cost of equity, and Weighted average stability fee - DSR expense rate for the cost of debt**
 
-# Cost of Equity
-
-# In[78]:
-
-
-#from apis import dpi_history
-
-dpi_history.tail()
-
-
-# In[79]:
-
-
-#from apis import mkr_history
-
-mkr_history.head()
-
-
-# In[80]:
-
-
 #Now lets calculate the beta
+
+#instead of dpi, lets try eth as benchmark
+
+eth = yf.Ticker('ETH-USD')
+
+eth_history = eth.history(period='max', interval='1mo')
+
+eth_history.index = pd.to_datetime(eth_history.index)
+
+filtered_eth = eth_history[(eth_history.index >= "2019-12") & (eth_history.index < "2023-11")]
+
 
 from sklearn.linear_model import LinearRegression
 
@@ -330,41 +320,18 @@ print(beta)
 
 
 from formulas import calculate_annual_return
-# Assuming 'dpi_history' DataFrame has a 'date' column in a format that can be converted to datetime
-"""
-dpi_history['date'] = pd.to_datetime(dpi_history['date'])
-dpi_history.set_index('date', inplace=True)
-"""
+
 # Group by year and apply the function
 annual_returns = dpi_history.groupby(dpi_history.index.year).apply(calculate_annual_return)
 
 print(annual_returns)
 
-
-# In[84]:
-
-
-#from apis import tbilldf
-
-tbilldf.tail()
-
-
-# In[85]:
-
-
 # Assuming 'day' is a column in your DataFrame and you want to filter based on this
 tbill_timeseries = tbilldf[pd.to_datetime(tbilldf.index) >= '2019-12-01']
-
-
-# In[86]:
-
 
 tbill_decimals = pd.DataFrame(tbill_timeseries['value'] / 100)
 
 tbill_decimals.tail()
-
-
-# In[87]:
 
 
 monthly_stats.index = pd.to_datetime(monthly_stats.index)
@@ -376,60 +343,6 @@ filtered_stats = monthly_stats[(monthly_stats.index >= "2019-12") & (monthly_sta
 # In[88]:
 
 
-#linear regression and r value for net income and interest rates
-"""
-from sklearn.linear_model import LinearRegression
-#We do .iloc[:-1] because is API and month is not done; we use previous full month
-x = tbill_decimals['value'].iloc[:-1].values.reshape(-1, 1)
-y = filtered_stats['net_income'].iloc[:-1].values
-
-model = LinearRegression()
-model.fit(x, y)
-
-
-r_squared = model.score(x, y)
-
-print("R^2:", r_squared)
-
-
-
-# In[89]:
-
-
-import matplotlib.pyplot as plt
-
-# Create a scatter plot of the original data
-plt.scatter(x, y, color='blue', label='Data points')
-
-# Predict y values for the given x values
-y_pred = model.predict(x)
-
-# Plot the regression line
-plt.plot(x, y_pred, color='red', label='Regression line')
-
-# Add labels and title (optional)
-plt.xlabel('tbill rate')
-plt.ylabel('net income')
-plt.title('Linear Regression Analysis')
-
-# Show the legend
-plt.legend()
-
-# Display the plot
-plt.show()
-
-
-# In[90]:
-
-
-y2 = filtered_stats['net_income'].iloc[:-1].values
-x2 = tbill_decimals['value'].iloc[:-1].values
-
-from scipy.stats import pearsonr
-
-correlation_coefficient, _ = pearsonr(x2, y2)
-print(correlation_coefficient)
-"""
 
 # DAO income sensitive to broader crypto market volume (demand for services), and interest rate hikes (interest income)
 
@@ -446,34 +359,19 @@ tbilldf_after2020 = tbilldf_yearly[tbilldf_yearly.index >= 2020]
 tbilldf_after2020_dec = tbilldf_after2020 / 100
 
 
-
-
-# In[92]:
-
-
 current_risk_free = tbilldf['value'].iloc[-1] / 100
-
-
-# In[93]:
 
 
 current_risk_free 
 
-
-# In[94]:
 
 
 annual_returns = pd.DataFrame(annual_returns)
 annual_returns
 
 
-# In[95]:
-
-
 tbilldf_after2020_dec['value']
 
-
-# In[96]:
 
 
 yearly_risk_premium = annual_returns[0] - tbilldf_after2020_dec['value']
@@ -482,37 +380,12 @@ yearly_risk_premium = annual_returns[0] - tbilldf_after2020_dec['value']
 yearly_risk_premium
 
 
-# In[97]:
-
-
 average_yearly_risk_premium = yearly_risk_premium.mean()
 
 average_yearly_risk_premium
 
 
-# In[98]:
-
-
-dpi_history['daily_returns']
- 
-
-
-# In[99]:
-
-
 mkr_history.set_index(dpi_history.index, inplace=True)
-
-
-# In[ ]:
-
-
-
-
-
-# cumulative approach
-
-# In[100]:
-
 
 # Assuming df is your DataFrame and it's sorted by date
 initial_value = dpi_history['price'].iloc[0]
@@ -535,27 +408,15 @@ print(cumulative_risk_premium)
 
 # Cost of Equity=Risk Free Rate+β×(Market Return−Risk Free Rate)
 
-# In[102]:
-
-
 short_term_makerdao_cost_equity = current_risk_free + beta * average_yearly_risk_premium
 long_term_makerdao_cost_equity = current_risk_free + beta * cumulative_risk_premium
 
-
-# In[103]:
-
-
-print(short_term_makerdao_cost_equity, long_term_makerdao_cost_equity)
+print('cost of equity short term and long term:', short_term_makerdao_cost_equity, long_term_makerdao_cost_equity)
 
 
 # Now, the cost of debt
-# 
-# 
-# 
 
-# In[104]:
-
-
+#I do not have an api for the stability fees, I check makerburn.com regularly to update if needed
 stability_fees = {
      "ETH-A" : 0.0525,
      "ETH-B" : 0.0575,
@@ -580,10 +441,7 @@ weighted_average_stability_fee = total_weighted_fee / total_revenue
 
 print("Weighted Average Stability Fee:", weighted_average_stability_fee)
 
-
-# In[107]:
-
-
+#another static data point 
 dsr_rate = 0.05
 
 mkrdao_cost_debt = weighted_average_stability_fee - dsr_rate
@@ -591,22 +449,16 @@ mkrdao_cost_debt = weighted_average_stability_fee - dsr_rate
 mkrdao_cost_debt
 
 
-# In[108]:
-
-
 e = market_value
 d = abs(liabilities)
 v = e + d
 short_re = short_term_makerdao_cost_equity
-long_re = long_term_makerdao_cost_equity # need to recalculate maybe with other benchmark, or maybe short_re better.  This also impacts beta
+long_re = long_term_makerdao_cost_equity 
 rd = mkrdao_cost_debt
 
 wacc = ((e/v) * short_re) + ((d/v) * rd)
 
 print(wacc)
-
-
-# In[109]:
 
 
 print('market value of equity:', e)
@@ -618,34 +470,6 @@ print('proportion of debt financing:', (d / v)*100)
 print('proportion of equity financing:', (e / v) * 100)
 print('wacc:',wacc)
 
-
-# In[110]:
-
-
-#linear regression and r value for net income and interest rates
-
-from sklearn.linear_model import LinearRegression
-#We do .iloc[:-1] because is API and month is not done; we use previous full month
-x = tbill_decimals['value'].iloc[:-1].values.reshape(-1, 1)
-y = filtered_stats['lending_income'].iloc[:-1].values
-
-model = LinearRegression()
-#model.fit(x, y)
-
-
-#r_squared = model.score(x, y)
-
-#print("R^2:", r_squared)
-
-
-
-# In[111]:
-
-
-monthly_stats.columns
-
-
-# In[112]:
 
 
 monthly_growth_rate = monthly_stats.select_dtypes(include='number').pct_change()
@@ -797,9 +621,6 @@ equity_abs = equity_history['balance'].abs()
 # Calculate the debt-to-equity ratio
 debt_to_equity_ratio = liabilities_abs / equity_abs
 
-print(debt_to_equity_ratio)
-
-
 debt_to_equity_ratio.index = pd.to_datetime(debt_to_equity_history.index)
 monthly_debt_to_equity = debt_to_equity_ratio.resample('M').mean()
 mf6 = mf5.merge(monthly_debt_to_equity, left_index=True, right_index=True, how='left')
@@ -834,9 +655,6 @@ mf9 = mf9.rename(columns={ 0 :'revenue'})
 mf9['net_profit_margin'] = mf9['net_income'] / mf9['revenue']
 mf9['price_to_sales'] = (mf9['supply'] * mf9['price']) / mf9['revenue']
 
-import pandas as pd
-from sklearn.linear_model import LinearRegression
-
 # Define the rolling window size
 window_size = 30  # For example, 30 days
 
@@ -856,10 +674,6 @@ for start in range(len(dpi_history) - window_size + 1):
     # Store the beta coefficient
     rolling_betas.iloc[start] = model.coef_[0]
 
-# Display the rolling beta series
-
-
-# Display the rolling beta series
 
 tbilldf['value'] = tbilldf['value'] / 100
 monthly_riskfree = tbilldf['value'].resample('M').mean()
@@ -879,7 +693,6 @@ mf10['beta'] = mf10['beta'].fillna(method='bfill')
 full_metrics = mf10.fillna(method='ffill')
 cleaned_metrics = full_metrics.drop(['beta', 'supply', 'revenue', 'average_assets', 'price','equity','net_income'], axis=1)
 
-import pandas as pd
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 # Assuming 'cleaned_metrics' is your DataFrame with the financial metrics
@@ -953,4 +766,4 @@ metrics_standard_scaled['financial_health_category'] = metrics_standard_scaled['
 # Display the results
 print(metrics_standard_scaled[['normalized_financial_health_score', 'financial_health_category']])
 
-print(beta)
+ev_to_rev = enterprise_value/ttm_revenue

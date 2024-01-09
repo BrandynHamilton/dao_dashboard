@@ -1,33 +1,22 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[2]:
-
-"""
-get_ipython().system('pip install import_ipynb')
-"""
-
-# In[3]:
-
-
 import pandas as pd
 import requests
 import numpy as np
 import seaborn as sns
 import yfinance as yf
-sns.set_theme()
-# Set the float display format to suppress scientific notation
-#pd.set_option('display.float_format', lambda x: '%.3f' % x)
-
-#import apis
 import makerdao
 import formulas
-
-
-import pandas as pd
-import requests
-import yfinance as yf
 import streamlit as st
+from makerdao import dpi_history
+from sklearn.linear_model import LinearRegression
+from formulas import calculate_annual_return
+from makerdao import tbilldf
+from makerdao import average_yearly_risk_premium, current_risk_free
+from formulas import calculate_historical_returns
+from makerdao import tbilldf_after2020
+from sklearn.preprocessing import StandardScaler
+from sklearn.impute import SimpleImputer
+from formulas import score_metric
+
 
 @st.cache_data(ttl=86400)
 def fetch_data_from_api(api_url, params=None):
@@ -119,29 +108,16 @@ liabilities.index = lidobs_df['period']
 equity = assets - liabilities
 equity.index=assets.index
 
-
-
 equity.head()
-
-
-
-
-
-# In[5]:
-
 
 current_ratio = assets / liabilities
 
 current_ratio.iloc[0]
 
-
-# In[6]:
-
 lidoincome_url = "https://api.dune.com/api/v1/query/2464243/results/"
 params_lidoincome = {"api_key": api_key}
 lidoincome_df = fetch_data_from_api(lidoincome_url, params_lidoincome)
 lidoincome_df['period'] = pd.to_datetime(lidoincome_df['period'])
-
 
 df_ttm = lidoincome_df.head(12)
 
@@ -151,14 +127,8 @@ ttm_metrics = ttm_metric.transpose()
 
 ttm_metrics.columns
 
-
-# In[9]:
-
-
 ttm_net_income = ttm_metrics['($) >>Total Protocol Income']
 ttm_revenue = ttm_metrics['($) >Net Revenue']
-
-
 
 net_profit_margin = ttm_net_income / ttm_revenue
 
@@ -172,24 +142,11 @@ roe = ttm_net_income / ttm_average_equity
 
 print(roe)
 
-
-# In[ ]:
-
-
-
-
-
-# In[10]:
-
-
 # Define the API endpoint and parameters
 lidomrktapi = "https://api.coingecko.com/api/v3/coins/lido-dao"
 ldo_market_value, ldo_current_price, ldo_supply = fetch_market_data(lidomrktapi, api_key_cg)
 
 print('supply is:',ldo_supply)
-
-# In[11]:
-
 
 debt_to_equity = liabilities / equity
 
@@ -199,30 +156,15 @@ eps = ttm_net_income.iloc[0] / ldo_supply
 
 print(eps)
 
-
-# In[12]:
-
-
 price_to_earnings = ldo_current_price/eps
 
 print(price_to_earnings)
-
-
-# In[13]:
-
 
 bookval = equity / ldo_supply
 
 market_to_book = ldo_current_price / bookval
 
 print(market_to_book.iloc[0])
-
-
-# In[68]:
-
-
-# Modified function to return only ldo_history and ldo_market_cap
-
 
 @st.cache_data(ttl=86400)
 def get_ldo_historical_data(api_key):
@@ -257,61 +199,25 @@ def get_ldo_historical_data(api_key):
         print(f"Failed to retrieve data: {response.status_code}")
         return ldo_history, ldo_market_cap  # Return empty DataFrames in case of failure
 
-# Usage
-
-
-# Call the function
 ldo_history, ldo_market_cap = get_ldo_historical_data(api_key_cg)
 
-# Assuming further processing happens here...
-
-
-# Calculate ldo_supply
 ldo_supply = ldo_market_cap['marketcap'] / ldo_history['price']
 
-# Now groupby should work
 ldo_fixed = ldo_supply.groupby([pd.Grouper(freq='M')]).mean()
 
-# Calculate the trailing twelve-month (TTM) average supply
 ttm_supply = ldo_fixed.tail(12).mean()
 
-# Display the result in Streamlit
 ttm_supply
-
-# In[15]:
-
 
 ldo_history['daily_returns'] = ldo_history['price'].pct_change().dropna()
 
-#ldo_history['date'] = pd.to_datetime(ldo_history['date'], unit='ms')
-
 ldo_history
-
-
-# In[53]:
-
-
-
-
-
-# In[16]:
-
-
-from makerdao import dpi_history
-
-
 
 dpi_history['daily_returns'] = dpi_history['price'].pct_change().dropna()
 
 dpi_history_filtered = dpi_history[dpi_history.index >= '2021-01-05']
 
 dpi_history_filtered
-
-
-# In[17]:
-
-
-from sklearn.linear_model import LinearRegression
 
 # Merge the two dataframes on the date
 merged_df = dpi_history_filtered.merge(ldo_history, on='date', suffixes=('_dpi', '_ldo'))
@@ -332,32 +238,12 @@ beta = model.coef_[0]
 
 print(f"Beta coefficient: {beta}")
 
-
-
-# In[18]:
-
-
 print(beta)
-
-
-# In[19]:
-
 
 ldo_history['daily_returns'].dropna()
 
-
-# In[20]:
-
-
 dpi_history_filtered['daily_returns'].dropna()
 
-
-# In[21]:
-
-
-import streamlit as st
-import requests
-import pandas as pd
 
 # Decorate your function with st.cache to enable caching
 @st.cache_data(ttl=86400)
@@ -386,36 +272,11 @@ def get_lidoyield_data():
 # Use the function in your Streamlit app
 lidoyield_df = get_lidoyield_data()
 
-
-
-# In[22]:
-
-
 lido_cost_debt = lidoyield_df['Lido staking APR(instant)'] / 100
 cost_of_debt = lido_cost_debt.iloc[0]
 
 cost_of_debt
 
-
-# In[23]:
-
-
-from formulas import calculate_annual_return
-
-#ldo_history.set_index('date', inplace=True)
-
-# Group by year and apply the function
-#annual_returns = ldo_history.groupby(ldo_history.index.year).apply(calculate_annual_return)
-
-#print(annual_returns)
-
-
-# In[24]:
-
-
-from makerdao import tbilldf
-
-# Assuming tbilldf.index has been correctly set to a datetime format
 tbilldf['decimal'] = tbilldf['value'] / 100
 tbill_yearly = tbilldf.groupby(tbilldf.index.year).mean(numeric_only=True)
 
@@ -423,68 +284,21 @@ tbill_filtered = tbill_yearly['decimal'][-3:]
 
 tbill_filtered
 
-
-# In[25]:
-
-
 print(beta)
-
-
-# In[26]:
-
-
-from makerdao import average_yearly_risk_premium, current_risk_free
-
 
 cost_equity = current_risk_free + beta * average_yearly_risk_premium
 
-
-# In[27]:
-
-
 print(cost_equity)
-
-
-# In[28]:
-
 
 formatted_market_value = "{:,.0f}".format(ldo_market_value)
 
 formatted_market_value
 
 
-# In[29]:
-
-
 live_liabilities = "{:,.0f}".format(liabilities[0])
-
-live_liabilities
-
-
-# In[30]:
-
-
-cost_equity
-
-
-# In[31]:
-
-
-cost_of_debt
-
-
-# In[32]:
-
 
 value_financing = ldo_market_value + liabilities[0]
 formatted_financing = "{:,.0f}".format(value_financing)
-
-formatted_financing
-
-
-
-# In[33]:
-
 
 print('market value of equity:', formatted_market_value)
 print('value of liabilities:', live_liabilities)
@@ -493,11 +307,6 @@ print('cost of debt:', cost_of_debt)
 print('proportion equity financed:', (ldo_market_value / value_financing) * 100)
 print('proportion debt financed:', (liabilities[0] / value_financing) * 100)
       
-
-
-# In[34]:
-
-
 e = ldo_market_value
 d = liabilities
 re = cost_equity
@@ -508,39 +317,16 @@ wacc = ((e/v) * re) + ((d/v) * rd)
 
 print('wacc is:',wacc[0])
 
-
-
-# In[ ]:
-
-
-def calculate_historical_returns(prices):
-    prices['date'] = prices.index
-    starting_value = prices.iloc[0]['price']
-    ending_value = prices.iloc[-1]['price']
-    number_of_years = (prices.iloc[-1]['date'] - prices.iloc[0]['date']).days / 365.25
-    cagr = (ending_value/starting_value) ** (1/number_of_years) - 1
-    return cagr
-
 lido_cagr = calculate_historical_returns(ldo_history)
 
-
-from makerdao import tbilldf_after2020
-
 tbill = tbilldf_after2020[tbilldf_after2020.index > 2020] / 100
-
-tbill
 
 ldo_annual_returns = ldo_history.groupby(ldo_history.index.year).apply(calculate_annual_return)
 ldo_annual_returns = pd.DataFrame(ldo_annual_returns)
 
-ldo_annual_returns
-
 excess_returns = ldo_annual_returns[0] - tbill['value']
-excess_returns
 
 ldo_avg_excess_return = excess_returns.mean()
-
-ldo_avg_excess_return
 
 current_ratio_df = current_ratio.to_frame(name='current_ratio')
 
@@ -627,9 +413,6 @@ combined_df['debt_ratio_history'] = debt_ratio_history
 combined_df['current_ratio'] = current_ratio_df['current_ratio']
 combined_df['net_profit_margin_history'] = net_profit_margin_history
 
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
-from sklearn.impute import SimpleImputer
 
 # Replace inf/-inf with NaN
 combined_df.replace([np.inf, -np.inf], np.nan, inplace=True)
@@ -653,11 +436,7 @@ metrics_standard_scaled = pd.DataFrame(standard_scaler.fit_transform(combined_df
                                        index=combined_df.index)
 
 # Define the function to score each metric based on its Z-score
-def score_metric(value, is_higher_better=True, max_score=3):
-    if is_higher_better:
-        return max(1, min(max_score, (value + 3) / 6 * max_score))
-    else:
-        return max(1, min(max_score, (-value + 3) / 6 * max_score))
+
 
 # Define the original weights for each metric in 'combined_df'
 weights = {

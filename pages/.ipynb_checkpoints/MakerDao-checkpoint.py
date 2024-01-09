@@ -139,6 +139,7 @@ with col4:
     st.write(f"Price to Sales: {price_to_sales:.2f}")
     st.write(f"Enterprise Value: ${enterprise_value:,.2f}")
     st.write(f"EV Multiple: {ev_multiple:.2f}")
+    st.write(f"Enterprise Value to Revenue: {ev_to_rev:,.2f}")
 
 # Financial Metrics Section
 st.subheader('Financial Metrics')
@@ -153,6 +154,7 @@ with col6:
     st.write(f"Cost of Debt: {rd:.2%}")
     st.write(f"CAGR: {mkr_cagr:.2%}")
     st.write(f"Average Excess Return: {mkr_avg_excess_return:.2%}")
+    
 
 
 

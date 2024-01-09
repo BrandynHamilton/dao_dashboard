@@ -27,9 +27,13 @@ def calculate_annual_return(yearly_data):
 
     return annual_return
 
-
-
-# In[3]:
+def calculate_historical_returns(prices):
+    prices['date'] = prices.index
+    starting_value = prices.iloc[0]['price']
+    ending_value = prices.iloc[-1]['price']
+    number_of_years = (prices.iloc[-1]['date'] - prices.iloc[0]['date']).days / 365.25
+    cagr = (ending_value/starting_value) ** (1/number_of_years) - 1
+    return cagr
 
 
 def month_to_quarter(month):

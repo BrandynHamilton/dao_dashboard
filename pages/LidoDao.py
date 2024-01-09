@@ -23,10 +23,10 @@ st.markdown(f'<h3 style="color: white;">Financial Health: <span style="color: {s
 import streamlit as st
 
 with st.container():
-    st.markdown("""
-    ### Executive Summary  
-    LidoDAO, with its governance token LDO priced at $2.77, operates within the decentralized finance (DeFi) ecosystem, managing liquid staking protocols. Despite a challenging period with a net loss of $40,586,965.90, the organization maintains a strong asset base. The financial health of LidoDAO is currently stable, with assets exceeding liabilities and an equity of $91,616,907.0751.
-    """)
+    st.markdown("""  
+LidoDAO, with its governance token LDO priced at \$2.77, operates within the decentralized finance (DeFi) ecosystem, managing liquid staking protocols. Despite a challenging period with a net loss of \$40,586,965.90, the organization maintains a strong asset base. The financial health of LidoDAO is currently stable, with assets exceeding liabilities and an equity of \$91,616,907.0751.
+""")
+
 
 with st.expander("Financial Health and Analysis"):
     st.markdown("""  
@@ -105,20 +105,23 @@ with col6:
     st.write(f'Earnings per Share: {eps:.2f}')
     st.write(f'Price to Earnings: {price_to_earnings:.2f}')
     st.write(f'Market to Book: {market_to_book.iloc[0]:.2f}')
-    #st.write('Price to Sales:', price_to_sales)
-    #st.write('Enterprise Value:', enterprise_value)
-    #st.write('EV Multiple:', ev_multiple)
+    st.write(f"Enterprise Value: ${enterprise_value:,.2f}")
+    st.write(f"Enterprise Value to Revenue: {ev_to_rev.iloc[0]:.2f}")
 
 st.subheader('Financial Metrics')
 
-st.write(f'Beta: {beta:.2f}')
-st.write(f'WACC: {wacc.iloc[0]:.2%}')
-st.write(f'Cost of Debt: {cost_of_debt:.2%}')
-st.write(f'Cost of Equity: {cost_equity:.2%}')
-st.write(f"CAGR: {lido_cagr:.2%}")
-st.write(f"Average Excess Return: {ldo_avg_excess_return:.2%}")
-st.write(enterprise_value)
-st.write(ev_to_rev)
+col7, col8 = st.columns(2)
+
+with col7:
+    st.write(f'Beta: {beta:.2f}')
+    st.write(f'Cost of Debt: {cost_of_debt:.2%}')
+    st.write(f'Cost of Equity: {cost_equity:.2%}')
+
+with col8:
+    st.write(f'WACC: {wacc.iloc[0]:.2%}')
+    st.write(f"CAGR: {lido_cagr:.2%}")
+    st.write(f"Average Excess Return: {ldo_avg_excess_return:.2%}")
+    
 
 st.markdown("""
 ---
