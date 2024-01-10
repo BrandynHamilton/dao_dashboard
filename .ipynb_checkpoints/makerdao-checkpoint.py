@@ -94,9 +94,32 @@ def fetch_and_process_api_data(api_url, data_key, date_column, value_column, dat
     else:
         print(f"Failed to retrieve data: {response.status_code}")
         return pd.DataFrame()  # Return an empty DataFrame in case of failure    
+
+@st.cache_data(ttl=86400)
+def fetch_and_process_tbill_data(api_url, data_key, date_column, value_column, date_format='datetime'):
+    # Retrieve the API key from Streamlit secrets
+    api_key = st.secrets["FRED_API_KEY"]
+
+    # Append the API key to the URL
+    api_url_with_key = f"{api_url}&api_key={api_key}"
+
+    response = requests.get(api_url_with_key)
+    if response.status_code == 200:
+        data = response.json()
+        df = pd.DataFrame(data[data_key])
+        
+        if date_format == 'datetime':
+            df[date_column] = pd.to_datetime(df[date_column])
+        
+        df.set_index(date_column, inplace=True)
+        df[value_column] = df[value_column].astype(float)
+        return df
+    else:
+        print(f"Failed to retrieve data: {response.status_code}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of failure
 # API URLs and parameters
-api_key = "Vti1XpoLF3ulDjZuSbyLXblt4I1JGoVu"
-api_key_cg = "CG-jTsiV2rsyVSHHULoNSWHU493"
+api_key = st.secrets["api_key"]
+api_key_cg = st.secrets["api_key_cg"]
 
 # MakerDAO API call
 mkrdao_url = "https://api.dune.com/api/v1/query/2840463/results/"
@@ -148,8 +171,8 @@ params_lidobs = {"api_key": api_key}
 lidobs_df = fetch_data_from_api(lidobs_url, params_lidobs)
 
 # tbill api for risk-free rate 
-tbill_historical_api = "https://api.stlouisfed.org/fred/series/observations?series_id=TB3MS&api_key=af3aeb14543cb05941f1b87abc3e3b7b&file_type=json"
-tbilldf = fetch_and_process_api_data(tbill_historical_api, "observations", "date", "value")
+tbill_historical_api = "https://api.stlouisfed.org/fred/series/observations?series_id=TB3MS&file_type=json"
+tbilldf = fetch_and_process_tbill_data(tbill_historical_api, "observations", "date", "value")
 
 #MKR Supply 
 mkr_supply_url = "https://api.dune.com/api/v1/query/482349/results"
@@ -206,7 +229,7 @@ market_to_book = current_price / bookval
 
 ttm_net_income = ttm_data['net_income']
 
-eps = ttm_net_income / ttm_supply
+eps = ttm_net_income / supply
 
 price_to_earnings = current_price/eps
 
@@ -287,18 +310,6 @@ equitydf.index = equitydf.index.normalize()
 # **Here lets focus on getting to what we need for model; for DCF we need WACC; for WACC we need SML for cost of equity, and Weighted average stability fee - DSR expense rate for the cost of debt**
 
 #Now lets calculate the beta
-
-#instead of dpi, lets try eth as benchmark
-
-eth = yf.Ticker('ETH-USD')
-
-eth_history = eth.history(period='max', interval='1mo')
-
-eth_history.index = pd.to_datetime(eth_history.index)
-
-filtered_eth = eth_history[(eth_history.index >= "2019-12") & (eth_history.index < "2023-11")]
-
-
 from sklearn.linear_model import LinearRegression
 
 X = dpi_history['daily_returns'].values.reshape(-1, 1)
@@ -309,14 +320,6 @@ model.fit(X, Y)
 
 beta = model.coef_[0]
 print(beta)
-
-
-# In[82]:
-
-
-
-
-# In[83]:
 
 
 from formulas import calculate_annual_return
@@ -333,57 +336,34 @@ tbill_decimals = pd.DataFrame(tbill_timeseries['value'] / 100)
 
 tbill_decimals.tail()
 
-
 monthly_stats.index = pd.to_datetime(monthly_stats.index)
 
 filtered_stats = monthly_stats[(monthly_stats.index >= "2019-12") & (monthly_stats.index < "2023-12")]
-
-
-
-# In[88]:
-
-
-
-# DAO income sensitive to broader crypto market volume (demand for services), and interest rate hikes (interest income)
-
-# In[91]:
-
 
 tbilldf_yearly = tbill_timeseries.groupby(tbill_timeseries.index.year).mean(numeric_only=True)
 
 tbilldf_yearly
 
-
 tbilldf_after2020 = tbilldf_yearly[tbilldf_yearly.index >= 2020]
 
 tbilldf_after2020_dec = tbilldf_after2020 / 100
 
-
 current_risk_free = tbilldf['value'].iloc[-1] / 100
 
-
 current_risk_free 
-
-
 
 annual_returns = pd.DataFrame(annual_returns)
 annual_returns
 
-
 tbilldf_after2020_dec['value']
-
-
 
 yearly_risk_premium = annual_returns[0] - tbilldf_after2020_dec['value']
      
-
 yearly_risk_premium
-
 
 average_yearly_risk_premium = yearly_risk_premium.mean()
 
 average_yearly_risk_premium
-
 
 mkr_history.set_index(dpi_history.index, inplace=True)
 
@@ -396,10 +376,6 @@ cagr = (final_value / initial_value) ** (1 / number_of_years) - 1
 cagr_percentage = cagr * 100
 
 print(f"The CAGR is {cagr_percentage:.2f}%")
-
-
-# In[101]:
-
 
 cumulative_risk_premium = cagr - current_risk_free
 

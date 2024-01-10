@@ -69,7 +69,7 @@ def fetch_dpi_historical_data(api_url):
 def get_lidobs_data():
     lidobs_url = "https://api.dune.com/api/v1/query/2484656/results/"
     params_lidobs = {
-        "api_key": "Vti1XpoLF3ulDjZuSbyLXblt4I1JGoVu"
+        "api_key": st.secrets["api_key"]
     }
 
     # Send a GET request to the API endpoint
@@ -93,9 +93,8 @@ def get_lidobs_data():
 
     return lidobs_df
     
-api_key = "Vti1XpoLF3ulDjZuSbyLXblt4I1JGoVu"
-api_key_cg = "CG-jTsiV2rsyVSHHULoNSWHU493"
-
+api_key = st.secrets["api_key"]
+api_key_cg = st.secrets["api_key_cg"]
 
 # Use the function in your Streamlit app
 lidobs_df = get_lidobs_data()
@@ -250,7 +249,7 @@ dpi_history_filtered['daily_returns'].dropna()
 def get_lidoyield_data():
     lidoyield_url = "https://api.dune.com/api/v1/query/570874/results/"
     params_lidoyield = {
-        "api_key": "Vti1XpoLF3ulDjZuSbyLXblt4I1JGoVu"
+        "api_key": st.secrets["api_key"]
     }
 
     # Send a GET request to the API endpoint

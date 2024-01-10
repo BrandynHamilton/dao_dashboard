@@ -94,9 +94,32 @@ def fetch_and_process_api_data(api_url, data_key, date_column, value_column, dat
     else:
         print(f"Failed to retrieve data: {response.status_code}")
         return pd.DataFrame()  # Return an empty DataFrame in case of failure    
+
+@st.cache_data(ttl=86400)
+def fetch_and_process_tbill_data(api_url, data_key, date_column, value_column, date_format='datetime'):
+    # Retrieve the API key from Streamlit secrets
+    api_key = st.secrets["FRED_API_KEY"]
+
+    # Append the API key to the URL
+    api_url_with_key = f"{api_url}&api_key={api_key}"
+
+    response = requests.get(api_url_with_key)
+    if response.status_code == 200:
+        data = response.json()
+        df = pd.DataFrame(data[data_key])
+        
+        if date_format == 'datetime':
+            df[date_column] = pd.to_datetime(df[date_column])
+        
+        df.set_index(date_column, inplace=True)
+        df[value_column] = df[value_column].astype(float)
+        return df
+    else:
+        print(f"Failed to retrieve data: {response.status_code}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of failure
 # API URLs and parameters
-api_key = "Vti1XpoLF3ulDjZuSbyLXblt4I1JGoVu"
-api_key_cg = "CG-jTsiV2rsyVSHHULoNSWHU493"
+api_key = st.secrets["api_key"]
+api_key_cg = st.secrets["api_key_cg"]
 
 # MakerDAO API call
 mkrdao_url = "https://api.dune.com/api/v1/query/2840463/results/"
@@ -148,8 +171,8 @@ params_lidobs = {"api_key": api_key}
 lidobs_df = fetch_data_from_api(lidobs_url, params_lidobs)
 
 # tbill api for risk-free rate 
-tbill_historical_api = "https://api.stlouisfed.org/fred/series/observations?series_id=TB3MS&api_key=af3aeb14543cb05941f1b87abc3e3b7b&file_type=json"
-tbilldf = fetch_and_process_api_data(tbill_historical_api, "observations", "date", "value")
+tbill_historical_api = "https://api.stlouisfed.org/fred/series/observations?series_id=TB3MS&file_type=json"
+tbilldf = fetch_and_process_tbill_data(tbill_historical_api, "observations", "date", "value")
 
 #MKR Supply 
 mkr_supply_url = "https://api.dune.com/api/v1/query/482349/results"
