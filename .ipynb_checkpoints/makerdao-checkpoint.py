@@ -33,13 +33,16 @@ def fetch_market_data(api_url, api_key):
     
 @st.cache_data(ttl=86400)
 def fetch_mkr_historical_data(api_url, api_key):
-    params = {'api_key': api_key}  # Add the API key as a parameter
-    response = requests.get(api_url, params=params)
+    # Use the API key either as a query parameter or in the headers
+    params = {'vs_currency': 'usd', 'days': '1152', 'interval': 'daily', 'x_cg_demo_api_key': api_key}
+    headers = {'x-cg-demo-api-key': api_key}  # Alternatively, use this header
+
+    response = requests.get(api_url, params=params, headers=headers)
 
     if response.status_code == 200:
         # Parse the JSON response
         mkr_historical_pricedata = response.json()
-        # Extract the 'prices' data
+        # Extract the 'prices' and 'market_caps' data
         mkr_historical_price = mkr_historical_pricedata['prices']
         mkr_market_cap = pd.DataFrame(mkr_historical_pricedata['market_caps'], columns=['date', 'marketcap'])
 
@@ -51,9 +54,9 @@ def fetch_mkr_historical_data(api_url, api_key):
         return mkr_history, mkr_market_cap
     else:
         print(f"Failed to retrieve data: {response.status_code}")
-        return mkr_history, mkr_market_cap  # Return an empty DataFrame in case of failure
+        return pd.DataFrame(), pd.DataFrame()
 
-    
+@st.cache_data(ttl=86400)    
 def fetch_dpi_historical_data(api_url, api_key):
     params = {'api_key': api_key}  # Add the API key as a parameter
     response = requests.get(api_url, params=params)
@@ -152,7 +155,9 @@ dpi_history['daily_returns'] = dpi_history['price'].pct_change().dropna()
 dpi_history = dpi_history.iloc[1:] #first day of trading nothing to get for return
 
 # Maker Historical Price Data
-mkr_historical_api = "https://api.coingecko.com/api/v3/coins/maker/market_chart?vs_currency=usd&days=1152&interval=daily"
+mkr_historical_api = "https://api.coingecko.com/api/v3/coins/maker/market_chart"
+
+# Fetching Maker Historical Price Data
 mkr_history, historical_mk = fetch_mkr_historical_data(mkr_historical_api, api_key_cg)
 historical_mk['date'] = pd.to_datetime(historical_mk['date'], unit='ms')
 historical_mk.set_index('date', inplace=True)
@@ -311,15 +316,20 @@ equitydf.index = equitydf.index.normalize()
 
 #Now lets calculate the beta
 from sklearn.linear_model import LinearRegression
+# Align the data sets by date
+aligned_data = dpi_history[['daily_returns']].join(mkr_history[['daily_returns']], lsuffix='_dpi', rsuffix='_mkr', how='inner')
 
-X = dpi_history['daily_returns'].values.reshape(-1, 1)
-Y = mkr_history['daily_returns'].values
+# Prepare data for linear regression
+X = aligned_data['daily_returns_dpi'].values.reshape(-1, 1)  # DPI returns
+Y = aligned_data['daily_returns_mkr'].values  # MKR returns
 
+# Fit the linear regression model
 model = LinearRegression()
 model.fit(X, Y)
 
+# Output the beta
 beta = model.coef_[0]
-print(beta)
+st.write(f"Beta: {beta}")
 
 
 from formulas import calculate_annual_return
@@ -365,7 +375,7 @@ average_yearly_risk_premium = yearly_risk_premium.mean()
 
 average_yearly_risk_premium
 
-mkr_history.set_index(dpi_history.index, inplace=True)
+#mkr_history.set_index(dpi_history.index, inplace=True)
 
 # Assuming df is your DataFrame and it's sorted by date
 initial_value = dpi_history['price'].iloc[0]

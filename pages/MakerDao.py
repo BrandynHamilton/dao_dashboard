@@ -18,24 +18,36 @@ color_map = {'bad': 'red', 'okay': 'yellow', 'good': 'green'}
 score_color = color_map.get(latest_health_score, 'black')
 st.markdown(f'<h3 style="color: white;">Financial Health: <span style="color: {score_color};">{latest_health_score.capitalize()}</span></h3>', unsafe_allow_html=True)
 
+def generate_dynamic_summary():
+    
+
+    # Constructing the summary
+    summary = (
+        f"MakerDAO (MKR) is currently priced at ${current_price:,.2f}. "
+        f"The financial health is rated as '{latest_health_score.capitalize()}' with a net profit margin of {net_profit_margin:.2%}. "
+        f"The current ratio of {current_ratio.iloc[-1]:.2f} and a debt to equity ratio of {debt_to_equity:.2f} reflect its financial stability."
+    )
+    return summary
+
+
 with st.container():
     st.write(""" ### Executive Summary
-    MakerDAO stands out as a dominant player in the decentralized finance (DeFi) sector, with its cutting-edge Multi-Collateral Dai (MCD) system and robust governance model. Exhibiting a net profit margin of 50.51% and an impressive return on equity of 141.04%, the company has proven its profitability and efficient capital utilization. An enterprise value of $2,455,136,429.26 and a price to earnings ratio of 18.96 showcases MakerDAO as an attractive proposition within the DeFi industry.
     """)
+    st.write(generate_dynamic_summary())
 
 with st.expander("Financial Health and Analysis"):
     st.write("""
-    MakerDAO has realized a commendable net income of $76,051,021.51 TTM. Yet, liquidity ratios raise flags about its short-term fiscal pressures, with a current ratio of 0.53 and a cash ratio of 0.09. The leverage ratios underscore a substantial dependence on debt, evidenced by a debt to equity ratio of 96.51. While profitability metrics are strong, these ratios highlight areas for strategic financial management focus.
-    """)
+    **MakerDAO's Financial Overview:**
 
-with st.expander("Market Position and Business Operations"):
-    st.write("""
-    With earnings per share at $84.05 and a market to book ratio of 27.17, investor confidence is palpable. The company's CAGR of 42.64% and an average excess return of 111.15% underscore its robust market standing. The SML analysis, in light of MakerDAO's beta of 0.78, reveals a lower systemic risk relative to the market, indicating resilience against market volatility.
-    """)
+    MakerDAO has realized a commendable net income of $76,051,021.51 TTM (Trailing Twelve Months). However, liquidity ratios raise flags about its short-term fiscal pressures. The current ratio stands at 0.53, and a cash ratio of 0.09, suggesting potential challenges in meeting short-term obligations. Additionally, the leverage ratios indicate a substantial reliance on debt financing, as evidenced by a high debt to equity ratio of 96.51. Despite these concerns, profitability metrics remain strong, underscoring the need for strategic financial management and careful consideration of liquidity and debt levels.
 
-with st.expander("Business Model and Governance"):
-    st.write("""
-    MakerDAO's pioneering governance via the MKR token fosters transparency and user engagement, integral to the DeFi ethos. The operational success of the Maker Protocol, a cornerstone of Ethereum-based dapps, reflects the strategic effectiveness of the Maker Foundation's decentralization efforts.
+    **Market Position and Business Operations:**
+
+    In the market, MakerDAO shows significant strength. With earnings per share at $84.05 and a market to book ratio of 27.17, investor confidence in the company is clear. A Compound Annual Growth Rate (CAGR) of 42.64% coupled with an average excess return of 111.15% further highlight its robust market standing. The Security Market Line (SML) analysis, considering MakerDAO's beta of 0.78, reveals a lower systemic risk relative to the overall market, indicating resilience against market volatility and a potentially safer investment.
+
+    **Business Model and Governance:**
+
+    At the core of MakerDAO's operation is its pioneering governance model through the MKR token, which fosters a high level of transparency and user engagement, aligning with the decentralized finance (DeFi) ethos. The operational success of the Maker Protocol, a key component of Ethereum-based decentralized applications (dapps), is reflective of the strategic effectiveness of the Maker Foundation's decentralization efforts. This governance model not only supports operational success but also ensures robust community involvement in decision-making processes.
     """)
 
 with st.expander("Strategic Recommendations for Management"):
@@ -56,10 +68,7 @@ with st.expander("Investor Recommendations"):
     Investors should consider MakerDAO's profitability and innovative governance as indicative of a strong investment opportunity. However, attention must be given to the liquidity constraints and high leverage, which introduce elements of financial risk.
     """)
 
-with st.expander("Conclusion"):
-    st.write("""
-    MakerDAO's position in the DeFi marketplace is underscored by strong financial indicators and a distinctive governance model. The strategic focus on improving liquidity and debt management, coupled with an innovative approach to community engagement and risk management, will be vital for MakerDAO's sustainable growth and continued market leadership. Investors and management alike should take heed of the company's financial nuances and its potential within the evolving DeFi landscape.
-    """)
+
 
 
 
@@ -128,26 +137,31 @@ with col4:
     st.write(f"Net Profit Margin: {net_profit_margin:.2%}")
     st.write(f"Return on Assets: {ROA:.2%}")
     st.write(f"Return on Equity: {ROE:.2%}")
+    
+st.subheader('Market Value Ratios')
+col5, col6 = st.columns(2)
 
-    st.subheader('Market Value Ratios')
+with col5:
     st.write(f"Earnings per Share: ${eps:,.2f}")
     st.write(f"Price to Earnings: {price_to_earnings:.2f}")
     st.write(f"Market to Book: {market_to_book:.2f}")
     st.write(f"Price to Sales: {price_to_sales:.2f}")
+    
+with col6:
     st.write(f"Enterprise Value: ${enterprise_value:,.2f}")
     st.write(f"EV Multiple: {ev_multiple:.2f}")
     st.write(f"Enterprise Value to Revenue: {ev_to_rev:,.2f}")
 
 # Financial Metrics Section
 st.subheader('Financial Metrics')
-col5, col6 = st.columns(2)
+col7, col8 = st.columns(2)
 
-with col5:
+with col7:
     st.write(f"Beta: {beta:.2f}")
     st.write(f"WACC: {wacc:.2%}")
     st.write(f"Cost of Equity: {short_re:.2%}")
 
-with col6:
+with col8:
     st.write(f"Cost of Debt: {rd:.2%}")
     st.write(f"CAGR: {mkr_cagr:.2%}")
     st.write(f"Average Excess Return: {mkr_avg_excess_return:.2%}")

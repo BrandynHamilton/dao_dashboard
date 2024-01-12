@@ -30,31 +30,16 @@ with st.expander("Financial Health and Analysis"):
     LidoDAO exhibits a balanced liquidity stance, but this is overshadowed by negative returns and a high debt to equity ratio of 229.89. Such financial leverage points to potential risks requiring astute management. Nonetheless, market sentiment remains optimistic about LidoDAO's prospects, as reflected in a solid market to book ratio of 26.91 and an impressive average excess return of 61.87%.
     """)
 
-with st.expander("Operational Insights and Strategic Recommendations"):
-    st.markdown("""  
-    With earnings per share at $84.05 and a market to book ratio of 27.17, investor confidence is palpable. The company's CAGR of 42.64% and an average excess return of 111.15% underscore its robust market standing. The SML analysis, in light of MakerDAO's beta of 0.78, reveals a lower systemic risk relative to the market, indicating resilience against market volatility.
-    """)
 
-with st.expander("Operational Insights and Strategic Recommendations"):
-    st.markdown("""  
-    The diligent management of LidoDAO's liquid staking protocols is noteworthy. However, recent financial shortfalls signal a need for tactical readjustment. Cost reduction strategies are crucial for converting the net loss to profit while maintaining operational integrity. Revenue growth can be spurred through innovative streams and revisiting service fees and staking mechanisms. Addressing the high leverage through debt restructuring and equity solutions is essential for the DAO's fiscal well-being. Fostering active participation in governance through LDO token holders could drive innovation and bolster decision-making processes.
-    """)
-
-with st.expander("Investor Recommendations"):
+with st.expander("Investor Outlook"):
     st.markdown("""
     Investors considering LidoDAO should assess its potential role in the DeFi ecosystem against the backdrop of the current negative profitability and high leverage. The DAO's considerable asset base and positive growth indicators may attract those with a long-term outlook and a tolerance for the existing financial fluctuations.
     """)
 
-with st.expander("Management Recommendations"):
+with st.expander("Management Outlook"):
     st.markdown("""  
     For LidoDAO's leadership, the priority lies in fiscal reformation, strategic growth investments, and leveraging its distinctive DAO governance to enhance operational flexibility and strategy. This tactical approach is pivotal for navigating the existing financial intricacies and reinforcing LidoDAO's market presence.
     """)
-
-with st.expander("Conclusion"):
-    st.markdown("""  
-    LidoDAO's potential in the DeFi domain is noteworthy, bolstered by a solid asset foundation and an engaged community governance framework. Addressing the outlined financial and operational challenges is key for both investors and the management team, aiming for LidoDAO's enduring growth and innovation in the liquid staking protocol landscape.
-    """)
-
 
 balancesheet_data = {
     'Assets': assets.iloc[0],
@@ -74,7 +59,7 @@ with col1:
 
 with col2:
     st.subheader('Live Balance Sheet')
-    st.table(balancesheet)
+    st.table(balancesheet.style.format({"Amount": "${:,.2f}"}))
 
 col3, col4 = st.columns(2)
 

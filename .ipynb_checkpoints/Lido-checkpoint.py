@@ -33,7 +33,13 @@ def fetch_data_from_api(api_url, params=None):
 
 @st.cache_data(ttl=86400)
 def fetch_market_data(api_url, api_key):
-    params = {'api_key': api_key}  # Add the API key as a parameter
+    # Initialize variables to None
+    market_value = None
+    current_price = None
+    supply = None
+
+    # Add the API key as a query parameter
+    params = {'x_cg_demo_api_key': api_key}
     response = requests.get(api_url, params=params)
 
     if response.status_code == 200:
@@ -41,10 +47,10 @@ def fetch_market_data(api_url, api_key):
         market_value = data['market_data']['market_cap']['usd']
         current_price = data['market_data']['current_price']['usd']
         supply = data['market_data']['circulating_supply']
-        return market_value, current_price, supply
     else:
         print(f"Failed to retrieve data: {response.status_code}")
-        return None, None, None  # Return None for each value if the API call fails
+
+    return market_value, current_price, supply
 
 
 @st.cache_data(ttl=86400)
@@ -172,7 +178,7 @@ def get_ldo_historical_data(api_key):
         'vs_currency': 'usd',
         'days': '1152',
         'interval': 'daily',
-        'api_key': api_key  # Add the API key as a parameter
+        'x_cg_demo_api_key': api_key  # Add the API key as a parameter
     }
     response = requests.get(ldo_historical_api, params=params)
     ldo_history = pd.DataFrame()

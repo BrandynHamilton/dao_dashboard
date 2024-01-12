@@ -16,8 +16,7 @@ print("R^2:", r_squared)
 
 
 
-# In[89]:
-
+"""
 
 
 # Create a scatter plot of the original data
@@ -52,7 +51,6 @@ from scipy.stats import pearsonr
 correlation_coefficient, _ = pearsonr(x2, y2)
 print(correlation_coefficient)
 
-"""
 eth = yf.Ticker('ETH-USD')
 
 eth_history = eth.history(period='max', interval='1mo')
@@ -64,3 +62,4 @@ eth_history['daily'returns']
 filtered_eth = eth_history[(eth_history.index >= "2019-12") & (eth_history.index < "2023-11")]
 
 """
+
