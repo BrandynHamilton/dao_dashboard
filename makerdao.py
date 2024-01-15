@@ -248,7 +248,9 @@ debt_to_equity_history = abs(liability_history) / abs(equity_history)
 
 debt_ratio = abs(liabilities) / assets
 
-enterprise_value = market_value + abs(dsr['balance'].iloc[-1]) - stablecoins['balance'].iloc[-1]
+enterprise_value = market_value + (abs(dsr['balance'].iloc[-1]) + abs(dai['balance'].iloc[-1])) - stablecoins['balance'].iloc[-1]
+
+#enterprise_value_timeseries = historical_mk['marketcap'] + abs(dsr['balance']) - stablecoins['balance']
 
 ev_multiple = enterprise_value / ttm_net_income
 

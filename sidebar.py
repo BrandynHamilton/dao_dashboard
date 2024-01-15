@@ -9,7 +9,22 @@ def save_email_to_csv(email, file_path='subscribers.csv'):
         writer.writerow([email])
 
 def create_sidebar():
-    # Email Subscription Section
+    # Display the logo at the top of the sidebar
+    logo = Image.open('Images/transparentlogo.png')  # Update path as needed
+    st.sidebar.image(logo, width=100)  # Adjust width as needed
+    
+        
+    # Manually create navigation links with unique keys
+    st.sidebar.header("")
+    if st.sidebar.button('Home', key='home_button'):
+        st.session_state['page'] = 'home'
+    if st.sidebar.button('LidoDao', key='lidodao_button'):
+        st.session_state['page'] = 'lidodao'
+    if st.sidebar.button('MakerDao', key='makerdao_button'):
+        st.session_state['page'] = 'makerdao'
+    if st.sidebar.button('Rocketpool', key='rocketpool_button'):
+        st.session_state['page'] = 'rocketpool'
+    st.sidebar.markdown("---")
     st.sidebar.header("Subscribe to Our Newsletter")
     email = st.sidebar.text_input("Enter your email", key="email")
 
@@ -51,25 +66,9 @@ def create_sidebar():
     st.sidebar.write(" ")
     st.sidebar.write(" ")
     st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
+    
+    
+    
     coingecko_logo = Image.open(r'Images/coingeckologo.png')  # Update path as needed
     st.sidebar.image(coingecko_logo, width=50)
     st.sidebar.markdown('<p style="font-size:smaller;">Crypto market data provided by <a href="https://www.coingecko.com" target="_blank">CoinGecko</a></p>', unsafe_allow_html=True)

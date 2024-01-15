@@ -19,7 +19,7 @@ def fetch_data_from_api(api_url, params=None):
 
 @st.cache_data(ttl=86400)
 def fetch_market_data(api_url, api_key):
-    params = {'api_key': api_key}  # Add API key as a parameter
+    params = {'x_cg_demo_api_key': api_key}  # Add API key as a parameter
     response = requests.get(api_url, params=params)
     if response.status_code == 200:
         data = response.json()
@@ -58,7 +58,7 @@ def fetch_mkr_historical_data(api_url, api_key):
 
 @st.cache_data(ttl=86400)    
 def fetch_dpi_historical_data(api_url, api_key):
-    params = {'api_key': api_key}  # Add the API key as a parameter
+    params = {'x_cg_demo_api_key': api_key}  # Add the API key as a parameter
     response = requests.get(api_url, params=params)
     dpi_history = pd.DataFrame()
 
@@ -248,7 +248,9 @@ debt_to_equity_history = abs(liability_history) / abs(equity_history)
 
 debt_ratio = abs(liabilities) / assets
 
-enterprise_value = market_value + abs(dsr['balance'].iloc[-1]) - stablecoins['balance'].iloc[-1]
+enterprise_value = market_value + (abs(dsr['balance'].iloc[-1]) + abs(dai['balance'].iloc[-1])) - stablecoins['balance'].iloc[-1]
+
+#enterprise_value_timeseries = historical_mk['marketcap'] + abs(dsr['balance']) - stablecoins['balance']
 
 ev_multiple = enterprise_value / ttm_net_income
 

@@ -106,6 +106,8 @@ api_key_cg = st.secrets["api_key_cg"]
 lidobs_df = get_lidobs_data()
 
 assets = lidobs_df['>Assets ($)']
+cash = lidobs_df['Protocol Assets ($)']
+cash.index = lidobs_df['period']
 assets.index = lidobs_df['period']
 liabilities = lidobs_df['>Liabilities ($)'] 
 liabilities.index = lidobs_df['period']
@@ -116,6 +118,7 @@ equity.index=assets.index
 equity.head()
 
 current_ratio = assets / liabilities
+cash_ratio = cash / liabilities 
 
 current_ratio.iloc[0]
 
@@ -522,6 +525,6 @@ consolidated_income_statement = consolidated_income_statement.rename(columns={0:
 # Now the column should be renamed, and you can print to check
 print(consolidated_income_statement)
 
-enterprise_value = ldo_market_value + liabilities[0] - assets[0]
+enterprise_value = ldo_market_value + liabilities[0] - cash[0]
 
 ev_to_rev = enterprise_value/ttm_revenue
