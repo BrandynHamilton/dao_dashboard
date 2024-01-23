@@ -1,33 +1,185 @@
 import streamlit as st
-from makerdao import *
+from data.makerdao import *
+from data.makerev import *
+import numpy as np
+import numpy_financial as npf
+from data.rocketpool import eth_history 
+from data.formulas import *
+
+mkr_mk = e
+mkr_liabilities = d
+mkr_rd = rd
+dpi_market_premium = average_yearly_risk_premium
+
+
+dpi_cumulative_risk_premium = cumulative_risk_premium
+
+
+
+def calculate_wacc(e, d, re, rd):
+    v = e + d
+    return ((e/v) * re) + ((d/v) * rd)
+
+def calculate_rd(risk_free, beta, market_premium):
+    return risk_free + beta * market_premium
+
+from scipy.optimize import newton
+
+def calculate_irr(initial_investment, cash_flows):
+    total_cash_flows = [initial_investment] + cash_flows
+    return npf.irr(total_cash_flows)
+    
+def calculate_npv(rate, initial_investment, cash_flows):
+    total_cash_flows = [initial_investment] + cash_flows
+    periods = range(len(total_cash_flows))
+    return sum(total_cash_flows[t] / (1 + rate) ** t for t in periods)
+    
+def calculate_payback_period(initial_investment, cash_flows):
+    cumulative_cash_flow = 0
+    for i, cash_flow in enumerate(cash_flows, start=1):
+        cumulative_cash_flow += cash_flow
+        if cumulative_cash_flow >= -initial_investment:
+            return i
+    return None  # Indicates payback period is longer than the number of periods
+
+def calculate_discounted_payback_period(rate, initial_investment, cash_flows):
+    cumulative_cash_flow = 0
+    for i, cash_flow in enumerate(cash_flows, start=1):
+        discounted_cf = cash_flow / ((1 + rate) ** i)
+        cumulative_cash_flow += discounted_cf
+        if cumulative_cash_flow >= -initial_investment:
+            return i
+    return None  # Indicates payback period is longer than the number of periods
+
+def calculate_profitability_index(rate, initial_investment, cash_flows):
+    npv = calculate_npv(rate, initial_investment, cash_flows)
+    return (npv + abs(initial_investment)) / abs(initial_investment)
+
+
+
+
+eth_annual_returns = eth_history.groupby(eth_history.index.year).apply(calculate_annual_return)
+
+
+
+tbill_timeseries = tbilldf[pd.to_datetime(tbilldf.index) >= '2015-12-01']
+tbill_decimals = pd.DataFrame(tbill_timeseries['value'] / 100)
+tbilldf_yearly = tbill_timeseries.groupby(tbill_timeseries.index.year).mean(numeric_only=True)
+
+eth_history['daily_returns_eth'] = eth_history['price'].pct_change().dropna()
+
+data_df = aligned_data.merge(eth_history['daily_returns_eth'], left_index=True, right_index=True)
+
+x_eth = data_df['daily_returns_eth'].values.reshape(-1, 1)
+x_dpi = data_df['daily_returns_dpi'].values.reshape(-1, 1)
+y = data_df['daily_returns_mkr'].values
+
+eth_mkr_beta = calculate_beta(x_eth,y)
+dpi_mkr_beta = calculate_beta(x_dpi,y)
+
+
+eth_yearly_risk_premium = eth_annual_returns.to_frame('annual_return').merge(tbilldf_yearly, left_index=True, right_index=True )
+eth_yearly_risk_premium.drop(columns = ['decimal'], inplace=True)
+
+eth_yearly_risk_premium = eth_yearly_risk_premium['annual_return'] - eth_yearly_risk_premium['value']
+
+eth_market_premium = eth_yearly_risk_premium.mean()
+
+
+
+eth_mkr_re = calculate_rd(current_risk_free, eth_mkr_beta, eth_market_premium)
+
+eth_mkr_wacc = calculate_wacc(mkr_mk, mkr_liabilities, eth_mkr_re, mkr_rd)
+
+
+
+eth_cagr = calculate_historical_returns(eth_history)
+
+eth_cumulative_risk_premium = eth_cagr - current_risk_free
+
+
+
+eth_mkr_long_re = calculate_rd(current_risk_free, eth_mkr_beta, eth_cumulative_risk_premium)
+
+eth_mkr_long_wacc = calculate_wacc(mkr_mk, mkr_liabilities, eth_mkr_long_re, mkr_rd)
+
+percentage_to_distribute = 0.90
+
+quarterly_df['dividend'] = quarterly_df['net_income'] * percentage_to_distribute
+
+quarterly_df['dividend_per_share'] = quarterly_df['dividend'] / quarterly_df['supply']
+
+quarterly_df['dividend_per_share'] = quarterly_df['dividend_per_share'].apply(lambda x: 0 if x <= 0 else x)
 
 def show_makerpage():
         
-        
-    expenses = ttm_data['expenses']
-    lending_income = ttm_data['lending_income']
-    liquidation_income = ttm_data['liquidation_income']
-    trading_income = ttm_data['trading_income']
-    net_income = ttm_data['net_income']
+    
+    
+
+    
     
     
     
     st.title('MakerDAO (MKR)')
+
+    with st.expander('Benchmark'):
+        benchmark_selection = st.radio(
+            'Choose the benchmark for WACC calculation:',
+            ('ETH', 'DPI'),
+            key='main_benchmark_selection'
+        )
+    with st.expander('Time Frame'):
+        time_frame_selection = st.radio(
+            'Choose the time frame for WACC calculation:',
+            ('Short Term', 'Long Term'),
+            key='main_time_frame_selection'
+        )
+
+    # Determine beta based on user selection
+    if benchmark_selection == 'ETH':
+        selected_beta = eth_mkr_beta
+        market_premium = eth_market_premium if time_frame_selection == 'Short Term' else eth_cumulative_risk_premium
+        re = calculate_rd(current_risk_free, selected_beta, market_premium)
+    elif benchmark_selection == 'DPI':
+        selected_beta = dpi_mkr_beta
+        market_premium = dpi_market_premium if time_frame_selection == 'Short Term' else dpi_cumulative_risk_premium
+        re = calculate_rd(current_risk_free, selected_beta, market_premium)
+
+    selected_wacc = calculate_wacc(mkr_mk, mkr_liabilities, re, mkr_rd)
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.metric("Selected WACC", f"{selected_wacc:.3%}")
+    with col2:
+        st.metric("Selected Beta", f"{selected_beta:.2f}")
+    with col3:
+        st.metric("Selected Cost of Equity", f"{re:.2%}")
+
+    st.metric('marketcap:', mkr_mk)
+    st.metric('liabilities:', mkr_liabilities)
+    st.metric('cost of debt:',mkr_rd )
     
-    # Displaying current price with line chart
-    st.write(f"${current_price:,.2f}")
+
+    
+    
+    st.metric('Price', f"${current_price:,.2f}")
     st.line_chart(mkr_history['price'])
     
-    # Display financial health score
+    
     latest_health_score = metrics_standard_scaled['financial_health_category'].iloc[-2]
     color_map = {'bad': 'red', 'okay': 'yellow', 'good': 'green'}
     score_color = color_map.get(latest_health_score, 'black')
     st.markdown(f'<h3 style="color: white;">Financial Health: <span style="color: {score_color};">{latest_health_score.capitalize()}</span></h3>', unsafe_allow_html=True)
     
     def generate_dynamic_summary():
+        if benchmark_selection == 'ETH':
+            selected_beta = eth_mkr_beta
+        elif benchmark_selection == 'DPI':
+            selected_beta = dpi_mkr_beta
         
     
-        # Constructing the summary
+        
         summary = (
             f"MakerDAO (MKR) is currently priced at ${current_price:,.2f}. "
             f"The financial health is rated as '{latest_health_score.capitalize()}' with a net profit margin of {net_profit_margin:.2%}. "
@@ -73,10 +225,10 @@ def show_makerpage():
     
     
     
-    # Accessing the data by label
     
     
-    # Creating the income statement dictionary
+    
+    
     incomestmt_data = {
         'Expenses': expenses,
         'Lending Income': lending_income,
@@ -85,7 +237,7 @@ def show_makerpage():
         'Net Income': net_income
     }
     
-    # Convert to DataFrame
+    
     incomestmt = pd.DataFrame(list(incomestmt_data.items()), columns=['Item', 'Amount'])
     
     incomestmt = incomestmt.set_index('Item')
@@ -93,7 +245,7 @@ def show_makerpage():
     incomestmt['Amount'] = pd.to_numeric(incomestmt['Amount'], errors='coerce').fillna(0)
     
     
-    # Creating and displaying the balance sheet
+   
     balancesheet_data = {
         'Assets': assets,
         'Liabilities': abs(liabilities),
@@ -102,7 +254,7 @@ def show_makerpage():
     balancesheet = pd.DataFrame.from_dict(balancesheet_data, orient='index', columns=['Amount'])
     balancesheet.index.name = 'Item'
     
-    # Layout with columns
+    
     col1, col2 = st.columns(2)
     
     with col1:
@@ -115,7 +267,7 @@ def show_makerpage():
     
         
     
-    # Layout with columns for financial information
+   
     col3, col4 = st.columns(2)
     
     liquidity_df = pd.DataFrame({
@@ -129,8 +281,8 @@ def show_makerpage():
     })
     
     profitability_df = pd.DataFrame({
-        'Metric': ['Net Profit Margin', 'Return on Assets', 'Return on Equity'],
-        'Value': [f"{net_profit_margin:.2%}", f"{ROA:.2%}", f"{ROE:.2%}"]
+        'Metric': ['Net Profit Margin', 'Return on Assets', 'Return on Equity', 'Capital Intensity Ratio'],
+        'Value': [f"{net_profit_margin:.2%}", f"{ROA:.2%}", f"{ROE:.2%}", f"{capital_intensity_ratio:.2f}"]
     })
     
     market_value_df = pd.DataFrame({
@@ -145,10 +297,10 @@ def show_makerpage():
     
     financial_metrics_df = pd.DataFrame({
         'Metric': ['Beta', 'WACC', 'Cost of Equity', 'Cost of Debt', 'CAGR', 'Average Excess Return'],
-        'Value': [f"{beta:.2f}", f"{wacc:.2%}", f"{short_re:.2%}", f"{rd:.2%}*", f"{mkr_cagr:.2%}", f"{mkr_avg_excess_return:.2%}"]
+        'Value': [f"{selected_beta:.2f}", f"{selected_wacc:.2%}", f"{re:.2%}", f"{rd:.2%}*", f"{mkr_cagr:.2%}", f"{mkr_avg_excess_return:.2%}"]
     })
     
-    # Displaying tables in Streamlit
+    
     col3, col4 = st.columns(2)
     
     with col3:
@@ -162,7 +314,7 @@ def show_makerpage():
         st.subheader('Profitability Ratios')
         st.table(profitability_df.set_index('Metric'))
     
-    st.subheader('Market Value Ratios')
+    st.subheader('Market Value Metrics')
     col5, col6 = st.columns(2)
     
     with col5:
@@ -179,6 +331,8 @@ def show_makerpage():
     
     with col8:
         st.table(financial_metrics_df.set_index('Metric').iloc[3:])
+
+    
         
     
     

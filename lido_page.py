@@ -1,14 +1,150 @@
 import streamlit as st
-from Lido import * 
+from data.Lido import * 
+from data.rocketpool import eth_history
+from data.formulas import *
+from data.Lido import wacc as short_dpi_wacc, d as ldo_liabilities
+from data.makerdao import cumulative_risk_premium
+
+dpi_cumulative_risk_premium = cumulative_risk_premium
+
+
+ldo_mk = e
+ldo_liabilities = ldo_liabilities.iloc[0]
+ldo_rd = rd
+dpi_market_premium = average_yearly_risk_premium
+
+
+def calculate_wacc(e, d, re, rd):
+    v = e + d
+    return ((e/v) * re) + ((d/v) * rd)
+
+def calculate_rd(risk_free, beta, market_premium):
+    return risk_free + beta * market_premium
+
+from scipy.optimize import newton
+
+def calculate_irr(initial_investment, cash_flows):
+    total_cash_flows = [initial_investment] + cash_flows
+    return npf.irr(total_cash_flows)
+    
+def calculate_npv(rate, initial_investment, cash_flows):
+    total_cash_flows = [initial_investment] + cash_flows
+    periods = range(len(total_cash_flows))
+    return sum(total_cash_flows[t] / (1 + rate) ** t for t in periods)
+    
+def calculate_payback_period(initial_investment, cash_flows):
+    cumulative_cash_flow = 0
+    for i, cash_flow in enumerate(cash_flows, start=1):
+        cumulative_cash_flow += cash_flow
+        if cumulative_cash_flow >= -initial_investment:
+            return i
+    return None  # Indicates payback period is longer than the number of periods
+
+def calculate_discounted_payback_period(rate, initial_investment, cash_flows):
+    cumulative_cash_flow = 0
+    for i, cash_flow in enumerate(cash_flows, start=1):
+        discounted_cf = cash_flow / ((1 + rate) ** i)
+        cumulative_cash_flow += discounted_cf
+        if cumulative_cash_flow >= -initial_investment:
+            return i
+    return None  # Indicates payback period is longer than the number of periods
+
+def calculate_profitability_index(rate, initial_investment, cash_flows):
+    npv = calculate_npv(rate, initial_investment, cash_flows)
+    return (npv + abs(initial_investment)) / abs(initial_investment)
+
+eth_annual_returns = eth_history.groupby(eth_history.index.year).apply(calculate_annual_return)
+
+
+
+tbill_timeseries = tbilldf[pd.to_datetime(tbilldf.index) >= '2015-12-01']
+tbill_decimals = pd.DataFrame(tbill_timeseries['value'] / 100)
+tbilldf_yearly = tbill_timeseries.groupby(tbill_timeseries.index.year).mean(numeric_only=True)
+
+eth_history['daily_returns_eth'] = eth_history['price'].pct_change().dropna()
+
+data_df = merged_df.merge(eth_history['daily_returns_eth'], left_index=True, right_index=True)
+
+x_eth = data_df['daily_returns_eth'].values.reshape(-1, 1)
+x_dpi = data_df['daily_returns_dpi'].values.reshape(-1, 1)
+y = data_df['daily_returns_ldo'].values
+
+eth_ldo_beta = calculate_beta(x_eth,y)
+dpi_ldo_beta = calculate_beta(x_dpi,y)
+
+
+eth_yearly_risk_premium = eth_annual_returns.to_frame('annual_return').merge(tbilldf_yearly, left_index=True, right_index=True )
+eth_yearly_risk_premium.drop(columns = ['decimal'], inplace=True)
+
+eth_yearly_risk_premium = eth_yearly_risk_premium['annual_return'] - eth_yearly_risk_premium['value']
+
+eth_market_premium = eth_yearly_risk_premium.mean()
+
+
+
+eth_ldo_re = calculate_rd(current_risk_free, eth_ldo_beta, eth_market_premium)
+
+eth_ldo_wacc = calculate_wacc(ldo_mk, ldo_liabilities, eth_ldo_re, ldo_rd)
+
+
+
+eth_cagr = calculate_historical_returns(eth_history)
+
+eth_cumulative_risk_premium = eth_cagr - current_risk_free
+
+#dpi_cumulative_risk_premium = cumulative_risk_premium
+
+
+
+eth_ldo_long_re = calculate_rd(current_risk_free, eth_ldo_beta, eth_cumulative_risk_premium)
+
+eth_ldo_long_wacc = calculate_wacc(ldo_mk, ldo_liabilities, eth_ldo_long_re, ldo_rd)
+
 
 
 def show_lidopage():
+
+    st.title('LidoDAO (LDO)')
+    with st.expander('Benchmark'):
+        benchmark_selection = st.radio(
+            'Choose the benchmark for WACC calculation:',
+            ('ETH', 'DPI'),
+            key='main_benchmark_selection'
+        )
+    with st.expander('Time Frame'):
+        time_frame_selection = st.radio(
+            'Choose the time frame for WACC calculation:',
+            ('Short Term', 'Long Term'),
+            key='main_time_frame_selection'
+        )
+
+    # Determine beta based on user selection
+    if benchmark_selection == 'ETH':
+        selected_beta = eth_ldo_beta
+        market_premium = eth_market_premium if time_frame_selection == 'Short Term' else eth_cumulative_risk_premium
+        re = calculate_rd(current_risk_free, selected_beta, market_premium)
+    elif benchmark_selection == 'DPI':
+        selected_beta = dpi_ldo_beta
+        market_premium = dpi_market_premium if time_frame_selection == 'Short Term' else dpi_cumulative_risk_premium
+        re = calculate_rd(current_risk_free, selected_beta, market_premium)
+
+    selected_wacc = calculate_wacc(ldo_mk, ldo_liabilities, re, ldo_rd)
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.metric("Selected WACC", f"{selected_wacc:.3%}")
+    with col2:
+        st.metric("Selected Beta", f"{selected_beta:.2f}")
+    with col3:
+        st.metric("Selected Cost of Equity", f"{re:.2%}")
+    
     
    
     
-    st.title('LidoDAO (LDO)')
     
-    st.write(f"${ldo_current_price:,.2f}")
+    
+    st.metric("Price", f"${ldo_current_price:,.2f}")
     st.line_chart(ldo_history['price'])
     
     latest_health_score = metrics_standard_scaled['financial_health_category'].iloc[1]
@@ -16,11 +152,11 @@ def show_lidopage():
     color_map = {'bad': 'red', 'okay': 'yellow', 'good': 'green'}
     score_color = color_map.get(latest_health_score, 'black')
     st.markdown(f'<h3 style="color: white;">Financial Health: <span style="color: {score_color};">{latest_health_score.capitalize()}</span></h3>', unsafe_allow_html=True)
-    # Get the latest financial health category
+    
     
     def generate_dynamic_summary():
     
-        # Constructing the summary
+        
         summary = (
             f"LidoDAO (LDO) is currently priced at ${ldo_current_price}. "
             f"The financial health is rated as '{latest_health_score.capitalize()}' with a net profit margin of {net_profit_margin.iloc[0]:.2%}. "
@@ -80,12 +216,12 @@ def show_lidopage():
     
     liquidity_df = pd.DataFrame({
     'Metric': ['Current Ratio', 'Cash Ratio'],
-    'Value': [f"{current_ratio.iloc[0]:.2f}", f"{cash_ratio.iloc[0]:.4f}"]
+    'Value': [f"{current_ratio.iloc[0]:.3f}", f"{cash_ratio.iloc[0]:.4f}"]
     })
 
     leverage_df = pd.DataFrame({
         'Metric': ['Debt Ratio', 'Debt to Equity Ratio'],
-        'Value': [f"{debt_ratio.iloc[0]:.2f}", f"{debt_to_equity.iloc[0]:.2f}"]
+        'Value': [f"{debt_ratio.iloc[0]:.3f}", f"{debt_to_equity.iloc[0]:.2f}"]
     })
     
     profitability_df = pd.DataFrame({
@@ -100,7 +236,7 @@ def show_lidopage():
     
     financial_metrics_df = pd.DataFrame({
         'Metric': ['Beta', 'Cost of Debt', 'Cost of Equity', 'WACC', 'CAGR', 'Average Excess Return'],
-        'Value': [f"{beta:.2f}", f"{cost_of_debt:.2%}", f"{cost_equity:.2%}", f"{wacc.iloc[0]:.2%}", f"{lido_cagr:.2%}", f"{ldo_avg_excess_return:.2%}"]
+        'Value': [f"{selected_beta:.2f}", f"{cost_of_debt:.2%}", f"{re:.2%}", f"{selected_wacc:.3%}", f"{lido_cagr:.2%}", f"{ldo_avg_excess_return:.2%}"]
     })
     
     # Displaying tables in Streamlit
@@ -121,7 +257,7 @@ def show_lidopage():
         st.table(profitability_df.set_index('Metric'))
     
     with col6:
-        st.subheader('Market Value Ratios')
+        st.subheader('Market Value Metrics')
         st.table(market_value_df.set_index('Metric'))
     
     st.subheader('Financial Metrics')
@@ -133,6 +269,11 @@ def show_lidopage():
     
     with col8:
         st.table(financial_metrics_df.iloc[3:].set_index('Metric'))
+
+    
+
+    
+   
     
         
     

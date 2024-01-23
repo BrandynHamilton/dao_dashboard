@@ -1,16 +1,14 @@
 [theme]
-# Primary colors
-primaryColor = "#E694FF"
+# Deep space blue primary color, you can adjust the shade as needed
+primaryColor = "#1B1F36"
 
-# Background color for the main content area
-backgroundColor = "#0E1117"
+backgroundColor = "#1A1A1A"
 
-# Background color for sidebar and most interactive widgets
-secondaryBackgroundColor = "#262730"
+# Slightly lighter grey for the sidebar and interactive widgets to distinguish from the main content area
+secondaryBackgroundColor = "#2A2A2A"
 
-# Color for text
-textColor = "#FAFAFA"
+# White text color for readability on the dark grey background
+textColor = "#FFFFFF"
 
-# Font style (e.g., "sans serif", "serif", "monospace")
+# Font style
 font = "sans serif"
-

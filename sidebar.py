@@ -1,4 +1,3 @@
-# sidebar.py
 import streamlit as st
 import csv
 from PIL import Image
@@ -9,15 +8,18 @@ def save_email_to_csv(email, file_path='subscribers.csv'):
         writer.writerow([email])
 
 def create_sidebar():
-    # Display the logo at the top of the sidebar
-    logo = Image.open('Images/transparentlogo.png')  # Update path as needed
-    st.sidebar.image(logo, width=100)  # Adjust width as needed
+    
+    logo = Image.open('Images/transparentlogo.png') 
+    st.sidebar.image(logo, use_column_width=True) 
+    
     
         
-    # Manually create navigation links with unique keys
+    
     st.sidebar.header("")
     if st.sidebar.button('Home', key='home_button'):
         st.session_state['page'] = 'home'
+    if st.sidebar.button('Financial Analysis', key='analysis_button'):
+        st.session_state['page'] = 'financial_analysis'
     if st.sidebar.button('LidoDao', key='lidodao_button'):
         st.session_state['page'] = 'lidodao'
     if st.sidebar.button('MakerDao', key='makerdao_button'):
@@ -52,20 +54,12 @@ def create_sidebar():
     st.sidebar.write(" ")
     st.sidebar.write(" ")
     st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
-    st.sidebar.write(" ")
+    
+    
+    
+    
+    
+    
     
     
     
