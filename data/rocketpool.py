@@ -8,7 +8,7 @@ from data.formulas import *
 api_key_cg = st.secrets["api_key_cg"]
 api_key = st.secrets["api_key"]
 
-@st.cache_data#(ttl=86400)  # Corrected decorator for Streamlit
+@st.cache_data(ttl=86400)  # Corrected decorator for Streamlit
 def get_rpl_historical_data(api_key):
     rpl_historical_api = "https://api.coingecko.com/api/v3/coins/rocket-pool/market_chart"
     params = {
@@ -43,7 +43,7 @@ def get_rpl_historical_data(api_key):
 
 rpl_history, rpl_market_cap = get_rpl_historical_data(api_key_cg)
 
-@st.cache_data#(ttl=86400)  # Corrected decorator for Streamlit
+@st.cache_data(ttl=86400)  # Corrected decorator for Streamlit
 def fetch_market_data(api_url, api_key):
     # Initialize variables to None
     market_value = None
@@ -97,7 +97,7 @@ print('rocketpool avg return:',rpl_avg_excess_return)
 print('rocketpool beta:', beta)
 print('rocketpool cagr:', rpl_cagr)
 
-@st.cache_data#(ttl=86400)
+@st.cache_data(ttl=86400)
 def get_api_data(url, params):
     response = requests.get(url, params=params)
     if response.status_code == 200:

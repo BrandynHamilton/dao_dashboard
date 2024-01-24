@@ -12,7 +12,7 @@ from data.makerdao import cumulative_risk_premium as dpi_cumulative_risk_premium
 
 
 
-@st.cache_data#(ttl=86400)
+@st.cache_data(ttl=86400)
 def fetch_data_from_api(api_url, params=None):
     response = requests.get(api_url, params=params)
     if response.status_code == 200:
@@ -25,7 +25,7 @@ def fetch_data_from_api(api_url, params=None):
         return pd.DataFrame()  # or an empty dict
 
 
-@st.cache_data#(ttl=86400)
+@st.cache_data(ttl=86400)
 def fetch_market_data(api_url, api_key):
     # Initialize variables to None
     market_value = None
@@ -47,7 +47,7 @@ def fetch_market_data(api_url, api_key):
     return market_value, current_price, supply
 
 
-@st.cache_data#(ttl=86400)
+@st.cache_data(ttl=86400)
 def fetch_dpi_historical_data(api_url):
     response = requests.get(api_url)
     if response.status_code == 200:
@@ -65,7 +65,7 @@ def fetch_dpi_historical_data(api_url):
         return pd.DataFrame()  # Return an empty DataFrame in case of failure
     
 # Decorate your function with st.cache to enable caching
-@st.cache_data#(ttl=86400)
+@st.cache_data(ttl=86400)
 def get_lidobs_data():
     lidobs_url = "https://api.dune.com/api/v1/query/2484656/results/"
     params_lidobs = {
@@ -168,7 +168,7 @@ market_to_book = ldo_current_price / bookval
 
 print(market_to_book.iloc[0])
 
-@st.cache_data#(ttl=86400)
+@st.cache_data(ttl=86400)
 def get_ldo_historical_data(api_key):
     ldo_historical_api = "https://api.coingecko.com/api/v3/coins/lido-dao/market_chart"
     params = {
@@ -248,7 +248,7 @@ dpi_history_filtered['daily_returns'].dropna()
 
 
 # Decorate your function with st.cache to enable caching
-@st.cache_data#(ttl=86400)
+@st.cache_data(ttl=86400)
 def get_lidoyield_data():
     lidoyield_url = "https://api.dune.com/api/v1/query/570874/results/"
     params_lidoyield = {
