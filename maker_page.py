@@ -5,6 +5,7 @@ import numpy as np
 import numpy_financial as npf
 from data.rocketpool import eth_history 
 from data.formulas import *
+from lido_page import yearly_staking
 
 mkr_mk = e
 mkr_liabilities = d
@@ -14,7 +15,11 @@ dpi_market_premium = average_yearly_risk_premium
 
 dpi_cumulative_risk_premium = cumulative_risk_premium
 
+merged_returns = yearly_staking.to_frame('staking apr').merge(annual_returns[0].to_frame('dpi returns'), left_index=True, right_index=True )
 
+dpi_ethstaking_yearly_risk_premium = merged_returns['dpi returns'] - merged_returns['staking apr']
+
+avg_eth_stk = dpi_ethstaking_yearly_risk_premium.mean()
 
 def calculate_wacc(e, d, re, rd):
     v = e + d
@@ -33,6 +38,12 @@ def calculate_npv(rate, initial_investment, cash_flows):
     total_cash_flows = [initial_investment] + cash_flows
     periods = range(len(total_cash_flows))
     return sum(total_cash_flows[t] / (1 + rate) ** t for t in periods)
+
+def calculate_npv_and_total_cash_flows(rate, initial_investment, cash_flows):
+    total_cash_flows = [initial_investment] + cash_flows
+    periods = range(len(total_cash_flows))
+    npv = sum(total_cash_flows[t] / (1 + rate) ** t for t in periods)
+    return npv, total_cash_flows
     
 def calculate_payback_period(initial_investment, cash_flows):
     cumulative_cash_flow = 0
@@ -120,6 +131,7 @@ def show_makerpage():
     
     
     
+    
     st.title('MakerDAO (MKR)')
 
     with st.expander('Benchmark'):
@@ -156,9 +168,7 @@ def show_makerpage():
     with col3:
         st.metric("Selected Cost of Equity", f"{re:.2%}")
 
-    st.metric('marketcap:', mkr_mk)
-    st.metric('liabilities:', mkr_liabilities)
-    st.metric('cost of debt:',mkr_rd )
+ 
     
 
     

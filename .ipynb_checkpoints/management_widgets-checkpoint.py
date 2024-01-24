@@ -28,6 +28,11 @@ def calculate_npv(rate, initial_investment, cash_flows):
     total_cash_flows = [initial_investment] + cash_flows
     periods = range(len(total_cash_flows))
     return sum(total_cash_flows[t] / (1 + rate) ** t for t in periods)
+
+def calculate_npv_and_total_cash_flows(rate, initial_investment, cash_flows):
+    total_cash_flows = [initial_investment] + cash_flows
+    periods = range(len(total_cash_flows))
+    return sum(total_cash_flows[t] / (1 + rate) ** t for t in periods)
     
 def calculate_payback_period(initial_investment, cash_flows):
     cumulative_cash_flow = 0

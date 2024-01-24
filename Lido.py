@@ -1,15 +1,21 @@
 import pandas as pd
 import requests
 import numpy as np
+import seaborn as sns
 import yfinance as yf
+import makerdao
+import formulas
 import streamlit as st
+from makerdao import dpi_history
 from sklearn.linear_model import LinearRegression
-from data.formulas import calculate_annual_return, calculate_historical_returns, score_metric, categorize_score
-from data.makerdao import average_yearly_risk_premium, current_risk_free, tbilldf_after2020, tbilldf, dpi_history
+from formulas import calculate_annual_return
+from makerdao import tbilldf
+from makerdao import average_yearly_risk_premium, current_risk_free
+from formulas import calculate_historical_returns
+from makerdao import tbilldf_after2020
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
-from data.makerdao import cumulative_risk_premium as dpi_cumulative_risk_premium
-
+from formulas import score_metric
 
 
 @st.cache_data#(ttl=86400)
@@ -27,13 +33,7 @@ def fetch_data_from_api(api_url, params=None):
 
 @st.cache_data#(ttl=86400)
 def fetch_market_data(api_url, api_key):
-    # Initialize variables to None
-    market_value = None
-    current_price = None
-    supply = None
-
-    # Add the API key as a query parameter
-    params = {'x_cg_demo_api_key': api_key}
+    params = {'api_key': api_key}  # Add the API key as a parameter
     response = requests.get(api_url, params=params)
 
     if response.status_code == 200:
@@ -41,10 +41,10 @@ def fetch_market_data(api_url, api_key):
         market_value = data['market_data']['market_cap']['usd']
         current_price = data['market_data']['current_price']['usd']
         supply = data['market_data']['circulating_supply']
+        return market_value, current_price, supply
     else:
         print(f"Failed to retrieve data: {response.status_code}")
-
-    return market_value, current_price, supply
+        return None, None, None  # Return None for each value if the API call fails
 
 
 @st.cache_data#(ttl=86400)
@@ -100,8 +100,6 @@ api_key_cg = st.secrets["api_key_cg"]
 lidobs_df = get_lidobs_data()
 
 assets = lidobs_df['>Assets ($)']
-cash = lidobs_df['Protocol Assets ($)']
-cash.index = lidobs_df['period']
 assets.index = lidobs_df['period']
 liabilities = lidobs_df['>Liabilities ($)'] 
 liabilities.index = lidobs_df['period']
@@ -112,7 +110,6 @@ equity.index=assets.index
 equity.head()
 
 current_ratio = assets / liabilities
-cash_ratio = cash / liabilities 
 
 current_ratio.iloc[0]
 
@@ -175,7 +172,7 @@ def get_ldo_historical_data(api_key):
         'vs_currency': 'usd',
         'days': '1152',
         'interval': 'daily',
-        'x_cg_demo_api_key': api_key  # Add the API key as a parameter
+        'api_key': api_key  # Add the API key as a parameter
     }
     response = requests.get(ldo_historical_api, params=params)
     ldo_history = pd.DataFrame()
@@ -274,15 +271,10 @@ def get_lidoyield_data():
 # Use the function in your Streamlit app
 lidoyield_df = get_lidoyield_data()
 
-lidoyield_df.set_index('time', inplace=True)
-
 lido_cost_debt = lidoyield_df['Lido staking APR(instant)'] / 100
 cost_of_debt = lido_cost_debt.iloc[0]
 
 cost_of_debt
-lido_cost_debt.index = pd.to_datetime(lido_cost_debt.index)
-
-yearly_staking = lido_cost_debt.groupby(lido_cost_debt.index.year).mean(numeric_only=True)
 
 tbilldf['decimal'] = tbilldf['value'] / 100
 tbill_yearly = tbilldf.groupby(tbilldf.index.year).mean(numeric_only=True)
@@ -294,8 +286,6 @@ tbill_filtered
 print(beta)
 
 cost_equity = current_risk_free + beta * average_yearly_risk_premium
-
-long_cost_equity = current_risk_free + beta * dpi_cumulative_risk_premium
 
 print(cost_equity)
 
@@ -319,18 +309,12 @@ print('proportion debt financed:', (liabilities[0] / value_financing) * 100)
 e = ldo_market_value
 d = liabilities
 re = cost_equity
-long_re = long_cost_equity
 v = e + d
 rd = cost_of_debt
 
 wacc = ((e/v) * re) + ((d/v) * rd)
 
-long_wacc = ((e/v) * long_re) + ((d/v) * rd)
-
 print('wacc is:',wacc[0])
-
-wacc = wacc[0]
-long_wacc = long_wacc[0]
 
 lido_cagr = calculate_historical_returns(ldo_history)
 
@@ -492,7 +476,13 @@ metrics_standard_scaled['normalized_financial_health_score'] = (
     metrics_standard_scaled['financial_health_score'] / max_possible_score * 3
 )
 
-
+def categorize_score(score):
+    if score >= 2.5:
+        return 'good'
+    elif score >= 1.5:
+        return 'okay'
+    else:
+        return 'bad'
 
 metrics_standard_scaled['financial_health_category'] = metrics_standard_scaled[
     'normalized_financial_health_score'
@@ -526,8 +516,6 @@ consolidated_income_statement = consolidated_income_statement.rename(columns={0:
 # Now the column should be renamed, and you can print to check
 print(consolidated_income_statement)
 
-enterprise_value = ldo_market_value + liabilities[0] - cash[0]
+enterprise_value = ldo_market_value + liabilities[0] - assets[0]
 
 ev_to_rev = enterprise_value/ttm_revenue
-
-ldo_liabilities = d.iloc[0]

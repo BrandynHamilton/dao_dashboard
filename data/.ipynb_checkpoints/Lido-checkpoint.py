@@ -274,10 +274,15 @@ def get_lidoyield_data():
 # Use the function in your Streamlit app
 lidoyield_df = get_lidoyield_data()
 
+lidoyield_df.set_index('time', inplace=True)
+
 lido_cost_debt = lidoyield_df['Lido staking APR(instant)'] / 100
 cost_of_debt = lido_cost_debt.iloc[0]
 
 cost_of_debt
+lido_cost_debt.index = pd.to_datetime(lido_cost_debt.index)
+
+yearly_staking = lido_cost_debt.groupby(lido_cost_debt.index.year).mean(numeric_only=True)
 
 tbilldf['decimal'] = tbilldf['value'] / 100
 tbill_yearly = tbilldf.groupby(tbilldf.index.year).mean(numeric_only=True)

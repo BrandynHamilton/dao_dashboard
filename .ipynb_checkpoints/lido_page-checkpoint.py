@@ -8,9 +8,6 @@ from data.makerdao import cumulative_risk_premium
 dpi_cumulative_risk_premium = cumulative_risk_premium
 
 
-st.write(long_cost_equity)
-st.write(long_wacc)
-
 ldo_mk = e
 ldo_liabilities = ldo_liabilities.iloc[0]
 ldo_rd = rd
@@ -106,7 +103,8 @@ eth_ldo_long_wacc = calculate_wacc(ldo_mk, ldo_liabilities, eth_ldo_long_re, ldo
 
 
 def show_lidopage():
-
+    
+    
     st.title('LidoDAO (LDO)')
     with st.expander('Benchmark'):
         benchmark_selection = st.radio(
@@ -146,6 +144,7 @@ def show_lidopage():
    
     
     
+    ldo_dpi_long_cost_equity = calculate_rd(current_risk_free, dpi_ldo_beta, dpi_cumulative_risk_premium )
     
     st.metric("Price", f"${ldo_current_price:,.2f}")
     st.line_chart(ldo_history['price'])

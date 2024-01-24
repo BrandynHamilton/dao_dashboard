@@ -4,9 +4,6 @@ import numpy as np
 import seaborn as sns
 import yfinance as yf
 import streamlit as st
-from data.formulas import categorize_score, calculate_annual_return, score_metric, equity_as_call_option, month_to_quarter
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-
 
 @st.cache_data#(ttl=86400)
 def fetch_data_from_api(api_url, params=None):
@@ -22,7 +19,7 @@ def fetch_data_from_api(api_url, params=None):
 
 @st.cache_data#(ttl=86400)
 def fetch_market_data(api_url, api_key):
-    params = {'x_cg_demo_api_key': api_key}  # Add API key as a parameter
+    params = {'api_key': api_key}  # Add API key as a parameter
     response = requests.get(api_url, params=params)
     if response.status_code == 200:
         data = response.json()
@@ -36,16 +33,13 @@ def fetch_market_data(api_url, api_key):
     
 @st.cache_data#(ttl=86400)
 def fetch_mkr_historical_data(api_url, api_key):
-    # Use the API key either as a query parameter or in the headers
-    params = {'vs_currency': 'usd', 'days': '1152', 'interval': 'daily', 'x_cg_demo_api_key': api_key}
-    headers = {'x-cg-demo-api-key': api_key}  # Alternatively, use this header
-
-    response = requests.get(api_url, params=params, headers=headers)
+    params = {'api_key': api_key}  # Add the API key as a parameter
+    response = requests.get(api_url, params=params)
 
     if response.status_code == 200:
         # Parse the JSON response
         mkr_historical_pricedata = response.json()
-        # Extract the 'prices' and 'market_caps' data
+        # Extract the 'prices' data
         mkr_historical_price = mkr_historical_pricedata['prices']
         mkr_market_cap = pd.DataFrame(mkr_historical_pricedata['market_caps'], columns=['date', 'marketcap'])
 
@@ -57,11 +51,11 @@ def fetch_mkr_historical_data(api_url, api_key):
         return mkr_history, mkr_market_cap
     else:
         print(f"Failed to retrieve data: {response.status_code}")
-        return pd.DataFrame(), pd.DataFrame()
+        return mkr_history, mkr_market_cap  # Return an empty DataFrame in case of failure
 
-@st.cache_data#(ttl=86400)    
+@st.cache_data    
 def fetch_dpi_historical_data(api_url, api_key):
-    params = {'x_cg_demo_api_key': api_key}  # Add the API key as a parameter
+    params = {'api_key': api_key}  # Add the API key as a parameter
     response = requests.get(api_url, params=params)
     dpi_history = pd.DataFrame()
 
@@ -158,9 +152,7 @@ dpi_history['daily_returns'] = dpi_history['price'].pct_change().dropna()
 dpi_history = dpi_history.iloc[1:] #first day of trading nothing to get for return
 
 # Maker Historical Price Data
-mkr_historical_api = "https://api.coingecko.com/api/v3/coins/maker/market_chart"
-
-# Fetching Maker Historical Price Data
+mkr_historical_api = "https://api.coingecko.com/api/v3/coins/maker/market_chart?vs_currency=usd&days=1152&interval=daily"
 mkr_history, historical_mk = fetch_mkr_historical_data(mkr_historical_api, api_key_cg)
 historical_mk['date'] = pd.to_datetime(historical_mk['date'], unit='ms')
 historical_mk.set_index('date', inplace=True)
@@ -203,6 +195,7 @@ cleaned_var_in_cf = pd.DataFrame(var_in_cf.iloc[:-1].dropna())
 cleaned_var_in_cf['net_income'].tail() 
 
 #calculating quarterly numbers
+from formulas import month_to_quarter
 
 revdf['quarter'] = revdf['month'].apply(month_to_quarter)
 quarterly_stats = revdf.groupby(['year', 'quarter']).sum().reset_index()
@@ -250,9 +243,7 @@ debt_to_equity_history = abs(liability_history) / abs(equity_history)
 
 debt_ratio = abs(liabilities) / assets
 
-enterprise_value = market_value + (abs(dsr['balance'].iloc[-1]) + abs(dai['balance'].iloc[-1])) - stablecoins['balance'].iloc[-1]
-
-#enterprise_value_timeseries = historical_mk['marketcap'] + abs(dsr['balance']) - stablecoins['balance']
+enterprise_value = market_value + abs(dsr['balance'].iloc[-1]) - stablecoins['balance'].iloc[-1]
 
 ev_multiple = enterprise_value / ttm_net_income
 
@@ -268,8 +259,6 @@ net_profit_margin = ttm_net_income / ttm_revenue
 price_to_sales = market_value / ttm_revenue
 
 net_working_capital = current_assets + current_liabilities
-
-financial_leverage = assets / abs(equity)
 
 print(net_working_capital)
 
@@ -317,27 +306,23 @@ equitydf = pd.DataFrame(mkrequity).dropna().drop(columns='normalized')
 equitydf.index = pd.to_datetime(equitydf.index)
 equitydf.index = equitydf.index.normalize()
 
-balance_sheet_time = assetsdf['balance'].to_frame('assets_balance').merge(liabilitiesdf['balance'].to_frame('liabilities_balance'), left_index=True, right_index=True)
-balance_sheet_time = balance_sheet_time.merge(equitydf['balance'].to_frame('equity_balance'), left_index=True, right_index=True)
+
 # **Here lets focus on getting to what we need for model; for DCF we need WACC; for WACC we need SML for cost of equity, and Weighted average stability fee - DSR expense rate for the cost of debt**
 
 #Now lets calculate the beta
 from sklearn.linear_model import LinearRegression
-# Align the data sets by date
-aligned_data = dpi_history[['daily_returns']].join(mkr_history[['daily_returns']], lsuffix='_dpi', rsuffix='_mkr', how='inner')
 
-# Prepare data for linear regression
-X = aligned_data['daily_returns_dpi'].values.reshape(-1, 1)  # DPI returns
-Y = aligned_data['daily_returns_mkr'].values  # MKR returns
+X = dpi_history['daily_returns'].values.reshape(-1, 1)
+Y = mkr_history['daily_returns'].values
 
-# Fit the linear regression model
 model = LinearRegression()
 model.fit(X, Y)
 
-# Output the beta
 beta = model.coef_[0]
-st.write(f"Beta: {beta}")
+print(beta)
 
+
+from formulas import calculate_annual_return
 
 # Group by year and apply the function
 annual_returns = dpi_history.groupby(dpi_history.index.year).apply(calculate_annual_return)
@@ -373,9 +358,6 @@ annual_returns
 tbilldf_after2020_dec['value']
 
 yearly_risk_premium = annual_returns[0] - tbilldf_after2020_dec['value']
-
-
-#eth_rf_prem = annual_returns[0] - 
      
 yearly_risk_premium
 
@@ -383,20 +365,21 @@ average_yearly_risk_premium = yearly_risk_premium.mean()
 
 average_yearly_risk_premium
 
-#mkr_history.set_index(dpi_history.index, inplace=True)
+mkr_history.set_index(dpi_history.index, inplace=True)
 
 # Assuming df is your DataFrame and it's sorted by date
 initial_value = dpi_history['price'].iloc[0]
 final_value = dpi_history['price'].iloc[-1]
 number_of_years = (dpi_history.index[-1] - dpi_history.index[0]).days / 365.25
 
-dpi_cagr = (final_value / initial_value) ** (1 / number_of_years) - 1
-cagr_percentage = dpi_cagr * 100
+cagr = (final_value / initial_value) ** (1 / number_of_years) - 1
+cagr_percentage = cagr * 100
 
 print(f"The CAGR is {cagr_percentage:.2f}%")
 
-cumulative_risk_premium = dpi_cagr - current_risk_free
+cumulative_risk_premium = cagr - current_risk_free
 
+print(cumulative_risk_premium)
 
 
 # Cost of Equity=Risk Free Rate+β×(Market Return−Risk Free Rate)
@@ -450,7 +433,6 @@ long_re = long_term_makerdao_cost_equity
 rd = mkrdao_cost_debt
 
 wacc = ((e/v) * short_re) + ((d/v) * rd)
-long_wacc = ((e/v) *long_re) + ((d/v) * rd)
 
 print(wacc)
 
@@ -530,9 +512,14 @@ current_wam = wam_by_date.iloc[-1]
 
 std_of_mkr = mkr_history['price'].pct_change().dropna().std(axis=0) 
 
+from scipy.stats import norm
 
 # BSM valuation of equity as a call option
-
+def equity_as_call_option(S, K, T, r, sigma, q=0):
+    d1 = (np.log(S / K) + (r - q + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
+    d2 = d1 - sigma * np.sqrt(T)
+    call_value = (S * np.exp(-q * T) * norm.cdf(d1)) - (K * np.exp(-r * T) * norm.cdf(d2))
+    return call_value
 
 # Example inputs
 debt_obligation = abs(liabilities) 
@@ -682,7 +669,7 @@ mf10['beta'] = mf10['beta'].fillna(method='bfill')
 full_metrics = mf10.fillna(method='ffill')
 cleaned_metrics = full_metrics.drop(['beta', 'supply', 'revenue', 'average_assets', 'price','equity','net_income'], axis=1)
 
-
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 # Assuming 'cleaned_metrics' is your DataFrame with the financial metrics
 min_max_scaler = MinMaxScaler()
@@ -690,6 +677,13 @@ metrics_min_max_scaled = pd.DataFrame(min_max_scaler.fit_transform(cleaned_metri
 
 standard_scaler = StandardScaler()
 metrics_standard_scaled = pd.DataFrame(standard_scaler.fit_transform(cleaned_metrics), columns=cleaned_metrics.columns, index=cleaned_metrics.index)
+
+# Define the function to score each metric based on its Z-score
+def score_metric(value, is_higher_better=True, max_score=3):
+    if is_higher_better:
+        return max(1, min(max_score, (value + 3) / 6 * max_score))
+    else:
+        return max(1, min(max_score, (-value + 3) / 6 * max_score))
 
 # Define the original weights for each metric in 'cleaned_metrics'
 weights = {
@@ -735,7 +729,13 @@ max_possible_score = sum(scaled_weights.values()) * 3
 metrics_standard_scaled['normalized_financial_health_score'] = metrics_standard_scaled['financial_health_score'] / max_possible_score * 3
 
 # Categorize the normalized score into 3 categories
-
+def categorize_score(score):
+    if score >= 2.5:
+        return 'good'
+    elif score >= 1.5:
+        return 'okay'
+    else:
+        return 'bad'
 
 metrics_standard_scaled['financial_health_category'] = metrics_standard_scaled['normalized_financial_health_score'].apply(categorize_score)
 
@@ -743,40 +743,3 @@ metrics_standard_scaled['financial_health_category'] = metrics_standard_scaled['
 print(metrics_standard_scaled[['normalized_financial_health_score', 'financial_health_category']])
 
 ev_to_rev = enterprise_value/ttm_revenue
-
-monthly_dividend_per_share = historical_supply.to_frame('supply').merge(full_metrics['net_income'],left_index=True, right_index=True)
-
-quarterly_df = monthly_dividend_per_share.resample('Q').sum()
-
-capital_intensity_ratio = assets / ttm_revenue
-
-expenses = ttm_data['expenses']
-lending_income = ttm_data['lending_income']
-liquidation_income = ttm_data['liquidation_income']
-trading_income = ttm_data['trading_income']
-net_income = ttm_data['net_income']
-
-incomestmt_data = {
-        'Expenses': expenses,
-        'Lending Income': lending_income,
-        'Liquidation Income': liquidation_income,
-        'Trading Income': trading_income,
-        'Net Income': net_income
-    }
-    
-    
-incomestmt = pd.DataFrame(list(incomestmt_data.items()), columns=['Item', 'Amount'])
-    
-incomestmt = incomestmt.set_index('Item')
-    
-incomestmt['Amount'] = pd.to_numeric(incomestmt['Amount'], errors='coerce').fillna(0)
-    
-    
-   
-balancesheet_data = {
-    'Assets': assets,
-    'Liabilities': abs(liabilities),
-    'Equity': abs(equity)
-}
-balancesheet = pd.DataFrame.from_dict(balancesheet_data, orient='index', columns=['Amount'])
-balancesheet.index.name = 'Item'

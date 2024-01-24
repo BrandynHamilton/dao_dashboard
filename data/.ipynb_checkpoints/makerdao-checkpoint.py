@@ -7,7 +7,8 @@ import streamlit as st
 from data.formulas import categorize_score, calculate_annual_return, score_metric, equity_as_call_option, month_to_quarter
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
-@st.cache_data(ttl=86400)
+
+@st.cache_data#(ttl=86400)
 def fetch_data_from_api(api_url, params=None):
     response = requests.get(api_url, params=params)
     if response.status_code == 200:
@@ -19,7 +20,7 @@ def fetch_data_from_api(api_url, params=None):
         print(f"Failed to retrieve data: {response.status_code}")
         return pd.DataFrame()  # or an empty dict
 
-@st.cache_data(ttl=86400)
+@st.cache_data#(ttl=86400)
 def fetch_market_data(api_url, api_key):
     params = {'x_cg_demo_api_key': api_key}  # Add API key as a parameter
     response = requests.get(api_url, params=params)
@@ -33,7 +34,7 @@ def fetch_market_data(api_url, api_key):
         print(f"Failed to retrieve data: {response.status_code}")
         return None, None, None  # Return None for each value if the API call fails
     
-@st.cache_data(ttl=86400)
+@st.cache_data#(ttl=86400)
 def fetch_mkr_historical_data(api_url, api_key):
     # Use the API key either as a query parameter or in the headers
     params = {'vs_currency': 'usd', 'days': '1152', 'interval': 'daily', 'x_cg_demo_api_key': api_key}
@@ -58,7 +59,7 @@ def fetch_mkr_historical_data(api_url, api_key):
         print(f"Failed to retrieve data: {response.status_code}")
         return pd.DataFrame(), pd.DataFrame()
 
-@st.cache_data(ttl=86400)    
+@st.cache_data#(ttl=86400)    
 def fetch_dpi_historical_data(api_url, api_key):
     params = {'x_cg_demo_api_key': api_key}  # Add the API key as a parameter
     response = requests.get(api_url, params=params)
@@ -83,7 +84,7 @@ def fetch_dpi_historical_data(api_url, api_key):
         return dpi_history  # Return an empty DataFrame in case of failure
 
 
-@st.cache_data(ttl=86400)
+@st.cache_data#(ttl=86400)
 def fetch_and_process_api_data(api_url, data_key, date_column, value_column, date_format='datetime'):
     response = requests.get(api_url)
     if response.status_code == 200:
@@ -100,7 +101,7 @@ def fetch_and_process_api_data(api_url, data_key, date_column, value_column, dat
         print(f"Failed to retrieve data: {response.status_code}")
         return pd.DataFrame()  # Return an empty DataFrame in case of failure    
 
-@st.cache_data(ttl=86400)
+@st.cache_data#(ttl=86400)
 def fetch_and_process_tbill_data(api_url, data_key, date_column, value_column, date_format='datetime'):
     # Retrieve the API key from Streamlit secrets
     api_key = st.secrets["FRED_API_KEY"]
@@ -372,6 +373,9 @@ annual_returns
 tbilldf_after2020_dec['value']
 
 yearly_risk_premium = annual_returns[0] - tbilldf_after2020_dec['value']
+
+
+#eth_rf_prem = annual_returns[0] - 
      
 yearly_risk_premium
 
@@ -393,7 +397,6 @@ print(f"The CAGR is {cagr_percentage:.2f}%")
 
 cumulative_risk_premium = dpi_cagr - current_risk_free
 
-print(cumulative_risk_premium)
 
 
 # Cost of Equity=Risk Free Rate+β×(Market Return−Risk Free Rate)

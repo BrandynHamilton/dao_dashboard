@@ -110,6 +110,7 @@ balancesheet_data = {
 balancesheet = pd.DataFrame.from_dict(balancesheet_data, orient='index', columns=['Amount'])
 
 def show_rocketpoolpage():
+    st.write(eth_annual_returns)
     
     st.title('Rocketpool (RPL)')
 
