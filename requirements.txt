@@ -1,0 +1,14 @@
+streamlit
+plotly
+seaborn
+numpy
+requests
+yfinance
+pandas
+scikit-learn
+numpy_financial
+PIL
+csv
+scipy
+sklearn
+
