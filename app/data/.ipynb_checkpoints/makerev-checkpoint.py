@@ -1,5 +1,5 @@
 import streamlit as st
-from .data.makerdao import historical_mk, dsr, dai, stablecoins, monthly_stats, revenue
+from .makerdao import historical_mk, dsr, dai, stablecoins, monthly_stats, revenue
 import pandas as pd
 
 

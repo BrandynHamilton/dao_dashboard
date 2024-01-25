@@ -4,7 +4,7 @@ import numpy as np
 import seaborn as sns
 import yfinance as yf
 import streamlit as st
-from .data.formulas import categorize_score, calculate_annual_return, score_metric, equity_as_call_option, month_to_quarter
+from .formulas import categorize_score, calculate_annual_return, score_metric, equity_as_call_option, month_to_quarter
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 

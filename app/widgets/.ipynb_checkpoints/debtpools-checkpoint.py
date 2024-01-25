@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-from data.makerdao import *
+from .data.makerdao import *
 
 # Part 1: Debt Pool Investment Simulation
 def calculate_apy(apr, compounding_periods=12):

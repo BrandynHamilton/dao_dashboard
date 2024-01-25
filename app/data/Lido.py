@@ -4,8 +4,8 @@ import numpy as np
 import yfinance as yf
 import streamlit as st
 from sklearn.linear_model import LinearRegression
-from .data.formulas import calculate_annual_return, calculate_historical_returns, score_metric, categorize_score
-from .data.makerdao import average_yearly_risk_premium, current_risk_free, tbilldf_after2020, tbilldf, dpi_history, cumulative_risk_premium as dpi_cumulative_risk_premium
+from .formulas import calculate_annual_return, calculate_historical_returns, score_metric, categorize_score
+from .makerdao import average_yearly_risk_premium, current_risk_free, tbilldf_after2020, tbilldf, dpi_history, cumulative_risk_premium as dpi_cumulative_risk_premium
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
  
