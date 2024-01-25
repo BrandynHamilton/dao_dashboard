@@ -1,5 +1,6 @@
 import streamlit as st
 import csv
+import os
 from PIL import Image
 
 def save_email_to_csv(email, file_path='subscribers.csv'):
@@ -9,8 +10,10 @@ def save_email_to_csv(email, file_path='subscribers.csv'):
 
 
 def create_sidebar():
-    logo = Image.open('Images/transparentlogo.png') 
-    st.sidebar.image(logo, use_column_width=True) 
+    current_dir = os.path.dirname(__file__)  # gets the directory where sidebar.py is located
+    image_path = os.path.join(current_dir, '..', 'Images', 'transparentlogo.png')
+    logo = Image.open(image_path)
+    # rest of your code 
 
     # Navigation select box
     page = st.sidebar.selectbox(
@@ -90,6 +93,7 @@ def create_sidebar():
     
     
     # Displaying the CoinGecko logo
-    coingecko_logo = Image.open(r'Images/coingeckologo.png')
+    coingecko_logo_path = os.path.join(current_dir, '..', 'Images', 'coingeckologo.png')
+    coingecko_logo = Image.open(coingecko_logo_path)
     st.sidebar.image(coingecko_logo, width=50)
     st.sidebar.markdown('<p style="font-size:smaller;">Crypto market data provided by <a href="https://www.coingecko.com" target="_blank">CoinGecko</a></p>', unsafe_allow_html=True)
