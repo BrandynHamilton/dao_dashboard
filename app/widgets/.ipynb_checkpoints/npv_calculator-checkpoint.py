@@ -76,13 +76,13 @@ def wacc_calculator_page():
         # Import required data based on DAO selection
         if dao_selection == 'MKR':
             from ..data.makerdao import e as dao_e, d as dao_d, rd as dao_rd 
-            from .maker_page import x_eth, x_dpi, y
+            from ..maker_page import x_eth, x_dpi, y
         elif dao_selection == 'LDO':
             from ..data.Lido import e as dao_e, ldo_liabilities as dao_d, rd as dao_rd 
             from .lido_page import x_eth, x_dpi, y
         elif dao_selection == 'RPL':
             from ..data.rocketpool import e as dao_e, d as dao_d, rd as dao_rd
-            from .rocketpool_page import x_eth, x_dpi, y
+            from ..rocketpool_page import x_eth, x_dpi, y
 
         # Calculate beta based on benchmark selection
         if benchmark_selection == 'ETH':
