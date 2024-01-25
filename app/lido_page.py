@@ -94,7 +94,7 @@ ldo_eth_short_wacc = calculate_wacc(ldo_mk, ldo_liabilities, ldo_eth_short_coste
 
 def show_lidopage():
     
-    st.write(quarterly_stats)
+    
     st.title('LidoDAO (LDO)')
     with st.expander('Benchmark'):
         benchmark_selection = st.radio(

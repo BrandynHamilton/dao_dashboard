@@ -1,11 +1,11 @@
 import streamlit as st
-from data.makerdao import *
-from data.makerev import *
+from .data.makerdao import *
+from .data.makerev import *
 import numpy as np
 import numpy_financial as npf
-from data.rocketpool import eth_history 
-from data.formulas import *
-from lido_page import yearly_staking
+from .data.rocketpool import eth_history 
+from .data.formulas import *
+from .lido_page import yearly_staking
 from scipy.optimize import newton
 
 mkr_mk = e
@@ -164,8 +164,7 @@ def show_makerpage():
     
     
     
-    st.write(revdf)
-    st.write(monthly_stats)
+    
     
     st.title('MakerDAO (MKR)')
 

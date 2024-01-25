@@ -164,8 +164,7 @@ def show_makerpage():
     
     
     
-    st.write(revdf)
-    st.write(monthly_stats.tail(12))
+    
     
     st.title('MakerDAO (MKR)')
 
