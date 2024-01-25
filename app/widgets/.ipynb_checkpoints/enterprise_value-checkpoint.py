@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
-from data.lidoev import filtered_ev_metrics as lido_metrics
-from data.makerev import historical_ev as maker_metrics, ev_metrics as monthly_metrics
-from data.rocketpool import beta_num as rpl_beta, rpl_cagr, rpl_avg_excess_return, ev_df, enterprise_value as rpl_enterprise_value
+from ..data.lidoev import filtered_ev_metrics as lido_metrics
+from ..data.makerev import historical_ev as maker_metrics, ev_metrics as monthly_metrics
+from ..data.rocketpool import beta_num as rpl_beta, rpl_cagr, rpl_avg_excess_return, ev_df, enterprise_value as rpl_enterprise_value
 
 def enterprise_metrics():
     st.title("Enterprise Value (EV) Metrics")

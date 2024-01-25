@@ -1,11 +1,11 @@
 import streamlit as st
 import pandas as pd
-from .data.makerdao import aligned_data, short_re as dpi_mkr_re, e as mkr_mk, d as mkr_liabilities, rd as mkr_rd, current_risk_free, average_yearly_risk_premium as dpi_market_premium, tbilldf, long_wacc as dpi_long_wacc, balance_sheet_time as mkr_bs, quarterly_df as mkr_quarterly_df, wacc, dividend_ps as mkr_income
-from .data.rocketpool import eth_history 
-from .data.formulas import *
+from ..data.makerdao import aligned_data, short_re as dpi_mkr_re, e as mkr_mk, d as mkr_liabilities, rd as mkr_rd, current_risk_free, average_yearly_risk_premium as dpi_market_premium, tbilldf, long_wacc as dpi_long_wacc, balance_sheet_time as mkr_bs, quarterly_df as mkr_quarterly_df, wacc, dividend_ps as mkr_income
+from ..data.rocketpool import eth_history 
+from ..data.formulas import *
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
-from .data.Lido import quarterly_stats as ldo_income
+from ..data.Lido import quarterly_stats as ldo_income
 
 
 
