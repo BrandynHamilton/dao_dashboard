@@ -1,5 +1,5 @@
 import streamlit as st
-from maker_page import dpi_market_premium, dpi_cumulative_risk_premium, eth_market_premium, eth_cumulative_risk_premium, calculate_wacc, calculate_rd, current_risk_free, calculate_npv_and_total_cash_flows, calculate_irr, calculate_payback_period, calculate_discounted_payback_period, calculate_profitability_index 
+from ..maker_page import dpi_market_premium, dpi_cumulative_risk_premium, eth_market_premium, eth_cumulative_risk_premium, calculate_wacc, calculate_rd, current_risk_free, calculate_npv_and_total_cash_flows, calculate_irr, calculate_payback_period, calculate_discounted_payback_period, calculate_profitability_index 
 from ..data.formulas import calculate_beta 
 import plotly.express as px
 import plotly.graph_objects as go
