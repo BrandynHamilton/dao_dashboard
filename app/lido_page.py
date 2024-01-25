@@ -1,10 +1,10 @@
 import streamlit as st
-from data.Lido import * 
-from data.rocketpool import eth_history
-from data.formulas import *
-from data.Lido import wacc as short_dpi_wacc, d as ldo_liabilities
-from data.makerdao import cumulative_risk_premium
-from maker_page import average_eth_short_risk, eth_short_cumulative_risk_premium
+from .data.Lido import * 
+from .data.rocketpool import eth_history
+from .data.formulas import *
+from .data.Lido import wacc as short_dpi_wacc, d as ldo_liabilities
+from .data.makerdao import cumulative_risk_premium
+from .maker_page import average_eth_short_risk, eth_short_cumulative_risk_premium
 
 dpi_cumulative_risk_premium = cumulative_risk_premium
 

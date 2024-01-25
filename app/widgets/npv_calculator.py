@@ -1,5 +1,5 @@
 import streamlit as st
-from maker_page import dpi_market_premium, dpi_cumulative_risk_premium, eth_market_premium, eth_cumulative_risk_premium, calculate_wacc, calculate_rd, current_risk_free, calculate_npv_and_total_cash_flows, calculate_irr, calculate_payback_period, calculate_discounted_payback_period, calculate_profitability_index 
+.from maker_page import dpi_market_premium, dpi_cumulative_risk_premium, eth_market_premium, eth_cumulative_risk_premium, calculate_wacc, calculate_rd, current_risk_free, calculate_npv_and_total_cash_flows, calculate_irr, calculate_payback_period, calculate_discounted_payback_period, calculate_profitability_index 
 from data.formulas import calculate_beta 
 import plotly.express as px
 import plotly.graph_objects as go
@@ -75,14 +75,14 @@ def wacc_calculator_page():
     def dynamic_wacc_calculation(dao_selection, benchmark_selection, time_frame_selection):
         # Import required data based on DAO selection
         if dao_selection == 'MKR':
-            from data.makerdao import e as dao_e, d as dao_d, rd as dao_rd 
-            from maker_page import x_eth, x_dpi, y
+            from .data.makerdao import e as dao_e, d as dao_d, rd as dao_rd 
+            from .maker_page import x_eth, x_dpi, y
         elif dao_selection == 'LDO':
-            from data.Lido import e as dao_e, ldo_liabilities as dao_d, rd as dao_rd 
-            from lido_page import x_eth, x_dpi, y
+            from .data.Lido import e as dao_e, ldo_liabilities as dao_d, rd as dao_rd 
+            from .lido_page import x_eth, x_dpi, y
         elif dao_selection == 'RPL':
-            from data.rocketpool import e as dao_e, d as dao_d, rd as dao_rd
-            from rocketpool_page import x_eth, x_dpi, y
+            from .data.rocketpool import e as dao_e, d as dao_d, rd as dao_rd
+            from .rocketpool_page import x_eth, x_dpi, y
 
         # Calculate beta based on benchmark selection
         if benchmark_selection == 'ETH':

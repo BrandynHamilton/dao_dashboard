@@ -1,9 +1,9 @@
 import requests 
 import pandas as pd
 import streamlit as st
-from data.makerdao import dpi_history, current_risk_free, average_yearly_risk_premium, cumulative_risk_premium as dpi_cumulative_risk_premium
-from data.Lido import tbill, tbilldf_after2020
-from data.formulas import *
+from .data.makerdao import dpi_history, current_risk_free, average_yearly_risk_premium, cumulative_risk_premium as dpi_cumulative_risk_premium
+from .data.Lido import tbill, tbilldf_after2020
+from .data.formulas import *
 
 api_key_cg = st.secrets["api_key_cg"]
 api_key = st.secrets["api_key"]

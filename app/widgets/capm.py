@@ -2,16 +2,16 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
-from data.makerdao import beta as makerdao_beta, average_yearly_risk_premium, current_risk_free as risk_free_rate, mkr_cagr, mkr_avg_excess_return, cumulative_risk_premium, cagr_percentage, dpi_history
-from data.Lido import beta as lidodao_beta, lido_cagr, ldo_avg_excess_return
-from data.rocketpool import beta_num as rpl_beta, rpl_cagr, rpl_avg_excess_return, ev_df, enterprise_value as rpl_enterprise_value
+from .data.makerdao import beta as makerdao_beta, average_yearly_risk_premium, current_risk_free as risk_free_rate, mkr_cagr, mkr_avg_excess_return, cumulative_risk_premium, cagr_percentage, dpi_history
+from .data.Lido import beta as lidodao_beta, lido_cagr, ldo_avg_excess_return
+from .data.rocketpool import beta_num as rpl_beta, rpl_cagr, rpl_avg_excess_return, ev_df, enterprise_value as rpl_enterprise_value
 from sidebar import create_sidebar
-from data.lidoev import filtered_ev_metrics as lido_metrics
-from data.makerev import historical_ev as maker_metrics, ev_metrics as monthly_metrics
-from maker_page import dpi_market_premium, dpi_cumulative_risk_premium, eth_market_premium, eth_cumulative_risk_premium, eth_mkr_beta, dpi_mkr_beta
-from lido_page import eth_ldo_beta, dpi_ldo_beta
-from rocketpool_page import eth_rpl_beta, dpi_rpl_beta
-from data.formulas import calculate_beta
+from .data.lidoev import filtered_ev_metrics as lido_metrics
+from .data.makerev import historical_ev as maker_metrics, ev_metrics as monthly_metrics
+from .maker_page import dpi_market_premium, dpi_cumulative_risk_premium, eth_market_premium, eth_cumulative_risk_premium, eth_mkr_beta, dpi_mkr_beta
+from .lido_page import eth_ldo_beta, dpi_ldo_beta
+from .rocketpool_page import eth_rpl_beta, dpi_rpl_beta
+from .data.formulas import calculate_beta
 
 def create_interactive_sml(risk_free_rate, market_risk_premium, makerdao_beta, lidodao_beta, rpl_beta, makerdao_return, lidodao_return, rpl_return, term):
         betas = np.linspace(0, 1.5, 100)

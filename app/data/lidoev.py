@@ -1,5 +1,5 @@
 import streamlit as st
-from data.Lido import *
+from .data.Lido import *
 
 #issue is that, for other apis, data for ev calc is daily; with lido the liabilities are reported monthly
 

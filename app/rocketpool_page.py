@@ -1,10 +1,10 @@
 import streamlit as st
-from data.rocketpool import *
-from data.formulas import *
+from .data.rocketpool import *
+from .data.formulas import *
 import numpy as np
 import numpy_financial as npf
-from data.makerdao import cumulative_risk_premium
-from maker_page import average_eth_short_risk, eth_short_cumulative_risk_premium
+from .data.makerdao import cumulative_risk_premium
+from .maker_page import average_eth_short_risk, eth_short_cumulative_risk_premium
 
 rpl_mk = e
 rpl_liabilities = d

@@ -1,6 +1,6 @@
 import streamlit as st
-from data.makerdao import incomestmt as mkr_incomestmt, balancesheet as mkr_balancesheet
-from data.Lido import income_statement as lido_incomestmt, balancesheet as ldo_balancesheet, lidoincome_df, income_statement_data
+from .data.makerdao import incomestmt as mkr_incomestmt, balancesheet as mkr_balancesheet
+from .data.Lido import income_statement as lido_incomestmt, balancesheet as ldo_balancesheet, lidoincome_df, income_statement_data
 
 # Fetch data
 def pro_forma_statements():
