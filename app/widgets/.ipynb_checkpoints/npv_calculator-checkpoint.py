@@ -79,7 +79,7 @@ def wacc_calculator_page():
             from ..maker_page import x_eth, x_dpi, y
         elif dao_selection == 'LDO':
             from ..data.Lido import e as dao_e, ldo_liabilities as dao_d, rd as dao_rd 
-            from .lido_page import x_eth, x_dpi, y
+            from ..lido_page import x_eth, x_dpi, y
         elif dao_selection == 'RPL':
             from ..data.rocketpool import e as dao_e, d as dao_d, rd as dao_rd
             from ..rocketpool_page import x_eth, x_dpi, y
