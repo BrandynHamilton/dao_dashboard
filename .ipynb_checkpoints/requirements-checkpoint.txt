@@ -1,8 +1,13 @@
 streamlit
-plotly>=5.0.0
+plotly
 seaborn
 numpy
 requests
 yfinance
 pandas
 scikit-learn
+numpy_financial
+Pillow
+scipy
+
+

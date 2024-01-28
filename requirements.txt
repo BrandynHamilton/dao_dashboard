@@ -7,9 +7,7 @@ yfinance
 pandas
 scikit-learn
 numpy_financial
-PIL
-csv
+Pillow
 scipy
-sklearn
-os
+
 
