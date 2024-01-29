@@ -145,8 +145,8 @@ def wacc_calculator_page():
     # Inputs for NPV calculation
     
     initial_investment_input = st.number_input('Initial Investment', value=100000.0)
-    # Ensure the initial investment is negative - updating because can't simulate bond issuance 
-    #initial_investment = -abs(initial_investment_input)
+    # Ensure the initial investment is negative - updating because can't simulate bond issuance used to be -abs(initial_investment_input)
+    initial_investment = initial_investment_input
 
     # Assuming selected_wacc is defined earlier in your script
     discount_rate = selected_wacc
