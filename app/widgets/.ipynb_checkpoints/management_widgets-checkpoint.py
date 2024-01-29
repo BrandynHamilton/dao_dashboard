@@ -195,8 +195,8 @@ selected_wacc = main(dao_selection, benchmark_selection, time_frame_selection)
 # Inputs for NPV calculation
 st.subheader("NPV Calculation")
 initial_investment_input = st.number_input('Initial Investment', value=100000.0)
-# Ensure the initial investment is negative
-initial_investment = -abs(initial_investment_input)
+# Ensure the initial investment is negative - changed this because can't effectively model debt financing/bond issuing
+#initial_investment = -abs(initial_investment_input)
 
 # Assuming selected_wacc is defined earlier in your script
 discount_rate = selected_wacc
