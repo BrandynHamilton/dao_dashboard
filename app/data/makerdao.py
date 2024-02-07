@@ -498,8 +498,8 @@ dmuparams = {"api_key": api_key }
 
 daidf = fetch_data_from_api(dai_maturity_url, dmuparams)
 
-daidf['dt'] = pd.to_datetime(daidf['dt'])
-daidf.set_index('dt', inplace=True)
+#daidf['dt'] = pd.to_datetime(daidf['dt'])
+#daidf.set_index('dt', inplace=True)
 
 average_block_time_seconds = 15
 # Assuming 1 block is a very short period, like 15 seconds
