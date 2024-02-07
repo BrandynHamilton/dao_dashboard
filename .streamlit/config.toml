@@ -1,7 +1,7 @@
 [theme]
-base="dark"
-primaryColor="##FF0000"  # Light gray for primary elements
-backgroundColor="#0E1117"  # Dark background
-secondaryBackgroundColor="#252A31"  # Slightly lighter for the sidebar
-textColor="#FAFAFA"  # Light color for text
+base="light"  # Set the base to light for the main content area
+primaryColor="#FF0000"  # Primary color for elements, correct the double hash typo
+backgroundColor="#FFFFFF"  # Light background for the main content
+secondaryBackgroundColor="#252A31"  # Keep the sidebar dark
+textColor="#000000"  # Dark color for text for better contrast on light background
 font="sans serif"
