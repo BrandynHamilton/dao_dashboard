@@ -108,7 +108,7 @@ def get_api_data(url, params):
         return None  # Return None or raise an exception if the request failed
 
 
-rpl_assets_url = 'https://api.dune.com/api/v1/query/3351658/results/'
+rpl_assets_url = 'https://api.dune.com/api/v1/query/3380184/results/'
 rpl_params = {"api_key": api_key}
 
 data = get_api_data(rpl_assets_url, rpl_params)
@@ -163,7 +163,7 @@ data_useful_filled
 # In[156]:
 
 
-assets = data_useful_filled['Cumulative_Net_Eth'].to_frame('net_eth')
+assets = data_useful_filled['assets_usd'].to_frame('net_eth')
 
 assets
 
@@ -227,7 +227,7 @@ assets_merged = assets.merge(eth_history['price'], left_index=True, right_index=
 # In[162]:
 
 
-assets_merged['assets_usd'] = assets_merged['net_eth'] * assets_merged['price']
+assets_merged['assets_usd'] = assets_merged['net_eth'] 
 
 
 # In[163]:
@@ -246,7 +246,7 @@ assets_merged['assets_usd_formatted']
 # In[165]:
 
 
-rpl_liabilities_url = 'https://api.dune.com/api/v1/query/1282424/results/'
+rpl_liabilities_url = 'https://api.dune.com/api/v1/query/3380184/results/'
 
 
 # In[166]:
@@ -263,8 +263,8 @@ data_useful2
 
 
 # Convert 'time' to datetime and set as index
-data_useful2['time'] = pd.to_datetime(data_useful2['time'])
-data_useful2.set_index('time', inplace=True)
+data_useful2['day'] = pd.to_datetime(data_useful2['day'])
+data_useful2.set_index('day', inplace=True)
 
 # Now perform the groupby operation
 
@@ -273,7 +273,7 @@ data_useful2.set_index('time', inplace=True)
 # In[168]:
 
 
-time_series_reth = data_useful2.resample('D').mean()
+time_series_reth = abs(data_useful2['liabilities_usd']).resample('D').mean()
 
 
 # In[169]:
@@ -306,13 +306,13 @@ reth_history['price'].index = reth_history['price'].index.tz_localize(None)
 # In[173]:
 
 
-merged_liabilities = time_series_reth.merge(reth_history['price'], left_index=True, right_index=True)
+merged_liabilities = time_series_reth.to_frame('liabilities_usd').merge(reth_history['price'], left_index=True, right_index=True)
 
 
 # In[174]:
 
 
-merged_liabilities['liabilities_usd'] = merged_liabilities['total_reth'] * merged_liabilities['price']
+merged_liabilities['liabilities_usd'] = merged_liabilities['liabilities_usd']
 merged_liabilities['formated_liabilities'] = merged_liabilities['liabilities_usd'].apply(lambda x: f"{x:,.2f}")
 
 
@@ -399,7 +399,7 @@ enterprise_value['ev_historical'] = enterprise_value['marketcap'] + enterprise_v
 enterprise_value['ev_historical']
 
 
-rpl_revenue_url = 'https://api.dune.com/api/v1/query/3354037/results/'
+rpl_revenue_url = 'https://api.dune.com/api/v1/query/3510307/results/'
 
 
 data3 = get_api_data(rpl_revenue_url, rpl_params)
@@ -415,10 +415,10 @@ rpl_revenue = data_useful3['rpl_usd'].to_frame('rpl_usd')
 
 start_date1 = rpl_revenue.index.min()
 end_date1 = rpl_revenue.index.max()
-date_range1 = pd.date_range(start=start_date, end=end_date, freq='W-MON')
+date_range1 = pd.date_range(start=start_date1, end=end_date1, freq='W-MON')
 
 # Step 2: Reindex your DataFrame
-rpl_revenue_reindexed = rpl_revenue.reindex(date_range)
+rpl_revenue_reindexed = rpl_revenue.reindex(date_range1)
 
 # Step 3: Fill missing values with 0
 rpl_revenue_reindexed['rpl_usd'].fillna(0, inplace=True)

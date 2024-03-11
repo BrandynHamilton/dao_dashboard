@@ -102,7 +102,14 @@ balancesheet = pd.DataFrame.from_dict(balancesheet_data, orient='index', columns
 
 def show_rocketpoolpage():
 
-    
+    st.write(ev_df.index)
+    st.write(monthly_revenue)
+    st.write(enterprise_value)
+    st.write(monthly_revenue)
+    st.write(rpl_revenue)
+    st.write(rpl_revenue_reindexed)
+    st.write(reth_history)
+    st.write(historical_mk_reth)
     
     
     st.title('Rocketpool (RPL)')
