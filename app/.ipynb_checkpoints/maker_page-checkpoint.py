@@ -168,15 +168,17 @@ def show_makerpage():
     
     st.title('MakerDAO (MKR)')
 
-    with st.expander('Benchmark'):
+    mcol1, mcol2 = st.columns(2)
+
+    with mcol1:
         benchmark_selection = st.radio(
-            'Choose the benchmark for WACC calculation:',
+            'Choose the benchmark for WACC/Beta calculation:',
             ('DPI', 'ETH'),
             key='main_benchmark_selection'
         )
-    with st.expander('Time Frame'):
+    with mcol2:
         time_frame_selection = st.radio(
-            'Choose the time frame for WACC calculation:',
+            'Choose the time frame for WACC/Beta calculation:',
             ('Short Term', 'Long Term'),
             key='main_time_frame_selection'
         )
@@ -218,7 +220,7 @@ def show_makerpage():
     latest_health_score = metrics_standard_scaled['financial_health_category'].iloc[-2]
     color_map = {'bad': 'red', 'okay': 'yellow', 'good': 'green'}
     score_color = color_map.get(latest_health_score, 'black')
-    st.markdown(f'<h3 style="color: white;">Financial Health: <span style="color: {score_color};">{latest_health_score.capitalize()}</span></h3>', unsafe_allow_html=True)
+    """st.markdown(f'<h3 style="color: white;">Financial Health: <span style="color: {score_color};">{latest_health_score.capitalize()}</span></h3>', unsafe_allow_html=True)"""
     
     def generate_dynamic_summary():
         if benchmark_selection == 'ETH':
@@ -236,38 +238,38 @@ def show_makerpage():
         return summary
     
     
-    with st.container():
-        st.write(""" ### Executive Summary
-        """)
-        st.write(generate_dynamic_summary())
+    # with st.container():
+    #     st.write(""" ### Executive Summary
+    #     """)
+    #     st.write(generate_dynamic_summary())
     
-    with st.expander("Financial Health and Analysis"):
-        st.write("""
-        **MakerDAO's Financial Overview:**"""
+    # with st.expander("Financial Health and Analysis"):
+    #     st.write("""
+    #     **MakerDAO's Financial Overview:**"""
     
-        f""" MakerDAO has realized a commendable net income of ${net_income:,.2f} TTM (Trailing Twelve Months). However, liquidity ratios raise flags about its short-term fiscal pressures. The current ratio stands at {current_ratio.iloc[-1]:.2f}, and a cash ratio of {cash_ratio:.2f}, suggesting potential challenges in meeting short-term obligations. Additionally, the leverage ratios indicate a substantial reliance on debt financing, as evidenced by a high debt to equity ratio of {debt_to_equity:.2f}. Despite these concerns, profitability metrics remain strong, underscoring the need for strategic financial management and careful consideration of liquidity and debt levels.
+    #     f""" MakerDAO has realized a commendable net income of ${net_income:,.2f} TTM (Trailing Twelve Months). However, liquidity ratios raise flags about its short-term fiscal pressures. The current ratio stands at {current_ratio.iloc[-1]:.2f}, and a cash ratio of {cash_ratio:.2f}, suggesting potential challenges in meeting short-term obligations. Additionally, the leverage ratios indicate a substantial reliance on debt financing, as evidenced by a high debt to equity ratio of {debt_to_equity:.2f}. Despite these concerns, profitability metrics remain strong, underscoring the need for strategic financial management and careful consideration of liquidity and debt levels.
     
-        **Market Position and Business Operations:**
+    #     **Market Position and Business Operations:**
     
-        In the market, MakerDAO shows significant strength. With earnings per share at ${eps:,.2f} and a market to book ratio of {market_to_book:.2f}, investor confidence in the company is clear. A Compound Annual Growth Rate (CAGR) of {mkr_cagr:.2%} coupled with an average excess return of {mkr_avg_excess_return:.2%} further highlight its robust market standing. The Security Market Line (SML) analysis, considering MakerDAO's beta of {beta:.2f}, reveals a lower systemic risk relative to the overall market, indicating resilience against market volatility and a potentially safer investment. """)
+    #     In the market, MakerDAO shows significant strength. With earnings per share at ${eps:,.2f} and a market to book ratio of {market_to_book:.2f}, investor confidence in the company is clear. A Compound Annual Growth Rate (CAGR) of {mkr_cagr:.2%} coupled with an average excess return of {mkr_avg_excess_return:.2%} further highlight its robust market standing. The Security Market Line (SML) analysis, considering MakerDAO's beta of {beta:.2f}, reveals a lower systemic risk relative to the overall market, indicating resilience against market volatility and a potentially safer investment. """)
     
-    with st.expander("Management Outlook"):
-        st.write("""
-        Improve Liquidity: Prioritize bolstering cash reserves and managing liabilities to enhance fiscal responsiveness.
+    # with st.expander("Management Outlook"):
+    #     st.write("""
+    #     Improve Liquidity: Prioritize bolstering cash reserves and managing liabilities to enhance fiscal responsiveness.
         
-        Debt Management: Rebalance the capital structure to mitigate financial risk and improve the debt to equity standing.
+    #     Debt Management: Rebalance the capital structure to mitigate financial risk and improve the debt to equity standing.
         
-        Expansion of Services: Diversify the Maker Protocol’s offerings and collateral assets to broaden user base and stabilize revenue.
+    #     Expansion of Services: Diversify the Maker Protocol’s offerings and collateral assets to broaden user base and stabilize revenue.
         
-        Community Engagement: Intensify community involvement in governance to maintain protocol responsiveness and drive innovation.
+    #     Community Engagement: Intensify community involvement in governance to maintain protocol responsiveness and drive innovation.
         
-        Risk Management: Capitalize on the lower beta to highlight MakerDAO's relative market stability. Advance risk analytics and implement hedging strategies to safeguard against market downturns. Promote community risk education for more informed governance decisions.
-        """)
+    #     Risk Management: Capitalize on the lower beta to highlight MakerDAO's relative market stability. Advance risk analytics and implement hedging strategies to safeguard against market downturns. Promote community risk education for more informed governance decisions.
+    #     """)
     
-    with st.expander("Investor Outlook"):
-        st.write("""
-        Investors should consider MakerDAO's profitability and innovative governance as indicative of a strong investment opportunity. However, attention must be given to the liquidity constraints and high leverage, which introduce elements of financial risk.
-        """)
+    # with st.expander("Investor Outlook"):
+    #     st.write("""
+    #     Investors should consider MakerDAO's profitability and innovative governance as indicative of a strong investment opportunity. However, attention must be given to the liquidity constraints and high leverage, which introduce elements of financial risk.
+    #     """)
     
     
     

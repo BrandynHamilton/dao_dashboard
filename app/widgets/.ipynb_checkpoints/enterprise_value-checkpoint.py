@@ -76,19 +76,22 @@ def enterprise_metrics():
     
     st.write("""Enterprise Value (EV) and Enterprise Value to Revenue (EV/R) ratios are key financial metrics that can offer insights into the valuation and performance of decentralized autonomous organizations (DAOs), similar to their use in evaluating traditional companies.""")
     st.write("""Historical analysis of these metrics can reveal trends and changes in the market's valuation of these organizations over time. For instance, a rising EV/R might indicate increasing market optimism about the DAO's future growth prospects. Conversely, a decreasing ratio might suggest a market reevaluation of the DAO's potential.""")
-    with st.expander("Enterprise Value (EV)"):
-        st.write(""" ***Enterprise Value (EV):*** 
-                This is a measure of a company's total value, often used as a more comprehensive alternative to market capitalization. In the context of DAOs, it can indicate the overall economic size and value of the DAO.
-                    """)
-    with st.expander("Enterprise Value to Revenue (EV/R)"):
-        st.write(""" ***Enterprise Value to Revenue (EV/R):*** This ratio compares the company's enterprise value to its revenue.
-                It provides an indication of how the market values every dollar of the DAO's revenues.
-                A higher ratio might suggest that the market expects higher growth or has a higher valuation of the DAO's future potential.
-                For DAOs, this could be influenced by factors like the adoption rate of their platforms, the growth of their assets under management, or their income from protocol fees.""")
+    
+    st.write(""" ***Enterprise Value (EV):*** 
+            This is a measure of a company's total value, often used as a more comprehensive alternative to market capitalization. In the context of DAOs, it can indicate the overall economic size and value of the DAO.
+                """)
+    
+    
 
     
 
     st.plotly_chart(fig3, use_container_width=True)
+
+    st.write(""" ***Enterprise Value to Revenue (EV/R):*** This ratio compares the company's enterprise value to its revenue.
+            It provides an indication of how the market values every dollar of the DAO's revenues.
+            A higher ratio might suggest that the market expects higher growth or has a higher valuation of the DAO's future potential.
+            For DAOs, this could be influenced by factors like the adoption rate of their platforms, the growth of their assets under management, or their income from protocol fees.""")
+    
     st.plotly_chart(fig2, use_container_width=True)
 
 # Remember to call the function where needed

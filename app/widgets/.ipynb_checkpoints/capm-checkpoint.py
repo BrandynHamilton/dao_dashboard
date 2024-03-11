@@ -97,9 +97,7 @@ def create_interactive_sml(risk_free_rate, market_risk_premium, makerdao_beta, l
 
 def show_industry_metrics():
     
-    st.title('CAPM')
-
-    st.subheader('Security Market Line (SML) Analysis')
+    st.title('Security Market Line (SML) Analysis')
 
     st.write(""" 
     This graph plots expected returns against the risk (measured by beta) of DAO equity tokens. It facilitates the comparison of actual and expected returns relative to market risk, offering valuable insights for investors and DAO financial managers.""")
@@ -136,19 +134,19 @@ def show_industry_metrics():
    
     
     
-    # ... [other code] ...
+    col1, col2 = st.columns(2)
 
-    # Dropdown selection for benchmark
-    benchmark = st.selectbox(
-        "Select Benchmark",
-        ["DPI", "ETH"]  # Replace with actual benchmark names
-    )
+    with col1:
+        benchmark = st.radio(
+            "Select Benchmark",
+            ["DPI", "ETH"]  # Replace with actual benchmark names
+        )
     
-    # Dropdown selection for time frame
-    time_frame = st.selectbox(
-        "Select Time Frame",
-        ("Short-term", "Long-term")
-    )
+    with col2:
+        time_frame = st.radio(
+            "Select Time Frame",
+            ("Short-term", "Long-term")
+        )
     
     # Recalculate betas based on selected benchmark
     makerdao_beta = eth_mkr_beta if benchmark == "ETH" else dpi_mkr_beta

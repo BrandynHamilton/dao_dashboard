@@ -95,16 +95,18 @@ ldo_eth_short_wacc = calculate_wacc(ldo_mk, ldo_liabilities, ldo_eth_short_coste
 def show_lidopage():
     
     
+    
     st.title('LidoDAO (LDO)')
-    with st.expander('Benchmark'):
+    mcol1, mcol2 = st.columns(2)
+    with mcol1:
         benchmark_selection = st.radio(
-            'Choose the benchmark for WACC calculation:',
+            'Choose the benchmark for WACC/Beta calculation:',
             ('DPI', 'ETH'),
             key='main_benchmark_selection'
         )
-    with st.expander('Time Frame'):
+    with mcol2:
         time_frame_selection = st.radio(
-            'Choose the time frame for WACC calculation:',
+            'Choose the time frame for WACC/Beta calculation:',
             ('Short Term', 'Long Term'),
             key='main_time_frame_selection'
         )
@@ -141,7 +143,7 @@ def show_lidopage():
     
     color_map = {'bad': 'red', 'okay': 'yellow', 'good': 'green'}
     score_color = color_map.get(latest_health_score, 'black')
-    st.markdown(f'<h3 style="color: white;">Financial Health: <span style="color: {score_color};">{latest_health_score.capitalize()}</span></h3>', unsafe_allow_html=True)
+    """st.markdown(f'<h3 style="color: white;">Financial Health: <span style="color: {score_color};">{latest_health_score.capitalize()}</span></h3>', unsafe_allow_html=True)"""
     
     
     def generate_dynamic_summary():
@@ -155,30 +157,30 @@ def show_lidopage():
         return summary
     
     
-    with st.container():
-        st.write(""" ### Executive Summary
-        """)
-        st.write(generate_dynamic_summary())
+    # with st.container():
+    #     st.write(""" ### Executive Summary
+    #     """)
+    #     st.write(generate_dynamic_summary())
     
-    with st.expander("Financial Health and Analysis"):
-        st.write(f"""
-        **Financial Overview:**  
-        LidoDAO, with its governance token LDO priced at \${ldo_current_price:,.2f}, operates within the decentralized finance (DeFi) ecosystem, managing liquid staking protocols. Despite a challenging period with a net loss of \${ttm_metrics['($) >>Total Protocol Income'].iloc[0]:,.2f}, the organization maintains a strong asset base. The financial health of LidoDAO is currently stable, with assets exceeding liabilities and an equity of \${abs(equity.iloc[0]):,.2f}.
+    # with st.expander("Financial Health and Analysis"):
+    #     st.write(f"""
+    #     **Financial Overview:**  
+    #     LidoDAO, with its governance token LDO priced at \${ldo_current_price:,.2f}, operates within the decentralized finance (DeFi) ecosystem, managing liquid staking protocols. Despite a challenging period with a net loss of \${ttm_metrics['($) >>Total Protocol Income'].iloc[0]:,.2f}, the organization maintains a strong asset base. The financial health of LidoDAO is currently stable, with assets exceeding liabilities and an equity of \${abs(equity.iloc[0]):,.2f}.
     
-        **Market Position and Business Operations:**
+    #     **Market Position and Business Operations:**
     
-        LidoDAO exhibits a balanced liquidity stance, but this is overshadowed by negative returns and a high debt to equity ratio of {debt_ratio.iloc[0]:.2f}. Such financial leverage points to potential risks requiring astute management. Nonetheless, market sentiment remains optimistic about LidoDAO's prospects, as reflected in a solid market to book ratio of {market_to_book:.2f} and an impressive average excess return of {ldo_avg_excess_return:.2%}.
-        """)
+    #     LidoDAO exhibits a balanced liquidity stance, but this is overshadowed by negative returns and a high debt to equity ratio of {debt_ratio.iloc[0]:.2f}. Such financial leverage points to potential risks requiring astute management. Nonetheless, market sentiment remains optimistic about LidoDAO's prospects, as reflected in a solid market to book ratio of {market_to_book:.2f} and an impressive average excess return of {ldo_avg_excess_return:.2%}.
+    #     """)
     
-    with st.expander("Investor Outlook"):
-        st.markdown("""
-        Investors considering LidoDAO should assess its potential role in the DeFi ecosystem against the backdrop of the current negative profitability and high leverage. The DAO's considerable asset base and positive growth indicators may attract those with a long-term outlook and a tolerance for the existing financial fluctuations.
-        """)
+    # with st.expander("Investor Outlook"):
+    #     st.markdown("""
+    #     Investors considering LidoDAO should assess its potential role in the DeFi ecosystem against the backdrop of the current negative profitability and high leverage. The DAO's considerable asset base and positive growth indicators may attract those with a long-term outlook and a tolerance for the existing financial fluctuations.
+    #     """)
     
-    with st.expander("Management Outlook"):
-        st.markdown("""  
-        For LidoDAO's leadership, the priority lies in fiscal reformation, strategic growth investments, and leveraging its distinctive DAO governance to enhance operational flexibility and strategy. This tactical approach is pivotal for navigating the existing financial intricacies and reinforcing LidoDAO's market presence.
-        """)
+    # with st.expander("Management Outlook"):
+    #     st.markdown("""  
+    #     For LidoDAO's leadership, the priority lies in fiscal reformation, strategic growth investments, and leveraging its distinctive DAO governance to enhance operational flexibility and strategy. This tactical approach is pivotal for navigating the existing financial intricacies and reinforcing LidoDAO's market presence.
+    #     """)
     
     balancesheet_data = {
         'Assets': assets.iloc[0],

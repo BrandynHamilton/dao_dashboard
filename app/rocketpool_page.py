@@ -101,28 +101,20 @@ balancesheet_data = {
 balancesheet = pd.DataFrame.from_dict(balancesheet_data, orient='index', columns=['Amount'])
 
 def show_rocketpoolpage():
-
-    st.write(ev_df.index)
-    st.write(monthly_revenue)
-    st.write(enterprise_value)
-    st.write(monthly_revenue)
-    st.write(rpl_revenue)
-    st.write(rpl_revenue_reindexed)
-    st.write(reth_history)
-    st.write(historical_mk_reth)
-    
     
     st.title('Rocketpool (RPL)')
 
-    with st.expander('Benchmark'):
+    mcol1, mcol2 = st.columns(2)
+
+    with mcol1:
         benchmark_selection = st.radio(
-            'Choose the benchmark for WACC calculation:',
+            'Choose the benchmark for WACC/Beta calculation:',
             ('DPI', 'ETH'),
             key='main_benchmark_selection'
         )
-    with st.expander('Time Frame'):
+    with mcol2:
         time_frame_selection = st.radio(
-            'Choose the time frame for WACC calculation:',
+            'Choose the time frame for WACC/Beta calculation:',
             ('Short Term', 'Long Term'),
             key='main_time_frame_selection'
         )
@@ -165,10 +157,10 @@ def show_rocketpoolpage():
         return summary
     
     
-    with st.container():
-        st.write(""" ### Executive Summary
-        """)
-        st.write(generate_dynamic_summary())
+    # with st.container():
+    #     st.write(""" ### Executive Summary
+    #     """)
+    #     st.write(generate_dynamic_summary())
     
     st.subheader('Live Balance Sheet')
     st.table(balancesheet.style.format({"Amount": "${:,.2f}"}))
