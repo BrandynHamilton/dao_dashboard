@@ -102,20 +102,6 @@ def show_industry_metrics():
     st.write(""" 
     This graph plots expected returns against the risk (measured by beta) of DAO equity tokens. It facilitates the comparison of actual and expected returns relative to market risk, offering valuable insights for investors and DAO financial managers.""")
 
-    with st.expander("For Investors"):
-        st.write("""
-        - **Risk-Return Analysis:** Evaluate whether DAO tokens are providing adequate returns for their assumed level of risk. Points above the SML suggest better-than-market performance, while points below indicate potential underperformance.
-    - **Investment Decision-Making:** Use the graph to pinpoint potentially undervalued or overvalued tokens, guiding investment decisions aligned with risk preferences.
-        
-        
-        """)
-    with st.expander("For DAO Financial Managers"):
-        st.write("""
-        - **Performance Insight:** The SML graph depicts how the market appraises the DAO's tokens vis-à-vis their risk, offering essential insights for strategic financial planning and token management.
-    - **Benchmarking and Strategy:** By using ETH or DPI as a benchmark, DAO managers can contrast their performance with the broader DeFi sector, informing strategic positioning and long-term planning.
-        
-        """)
-
     with st.expander("Benchmark Considerations"):
         st.write("""
         - **ETH:** When using Ethereum as a benchmark, the SML reflects the token's performance in relation to the overall Ethereum market. This is relevant for investors focusing on the systemic risk associated with the Ethereum blockchain and its wider ecosystem.
